@@ -1,0 +1,21 @@
+.optimization-path {
+    stroke-width: 3;
+    fill: none;
+    stroke-opacity: 0.01;
+    stroke: #000;
+}
+
+.circle {
+    r: 3.5;
+    stroke-opacity: 0.65;
+    stroke: black;
+}
+
+/* must have the same prefix as optimizer id: see optimizers.js */
+.sgd-circle {
+    fill: orange;
+}
+
+.momentum-circle {
+    fill: indianred;
+}
