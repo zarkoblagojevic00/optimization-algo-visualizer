@@ -1,10 +1,10 @@
-// import { select } from "d3";
-
 import {
     select,
     scaleLinear,
-    axisRight,
     axisTop,
+    axisRight,
+    axisBottom,
+    axisLeft,
     geoPath,
     contours,
     range,
@@ -13,7 +13,6 @@ import {
     pointer,
     line,
     curveCardinal,
-    // easeCubicInOut,
 } from "d3";
 
 const render = (options) => {
@@ -27,11 +26,14 @@ const render = (options) => {
 
 export { render as default };
 
+const width = 650;
+const height = 650;
+
 const q = 4; // The level of detail, e.g., sample every 4 pixels in x and y.
 const nContours = 30;
-const drawingTime = 40;
+const drawingTime = 30;
 
-const createSvg = ({ svgContainerId, width, height }) =>
+const createSvg = ({ svgContainerId }) =>
     select(`#${svgContainerId}`)
         .append("svg")
         .attr("viewBox", [0, 0, width, height])
@@ -39,7 +41,7 @@ const createSvg = ({ svgContainerId, width, height }) =>
         .style("padding", "20");
 
 let xScale, yScale;
-const setupScales = ({ xRange, yRange, width, height }) => {
+const setupScales = ({ xRange, yRange }) => {
     xScale = scaleLinear(xRange, [0, width]);
     yScale = scaleLinear(yRange, [height, 0]);
 };
@@ -59,13 +61,8 @@ const addContours = (svg, options) => {
         .attr("d", geoPath());
 };
 
-const createContours = ({
-    width,
-    height,
-    optimizationProblem: { f },
-    zRange,
-}) => {
-    const grid = createGrid(width, height, f);
+const createContours = ({ optimizationProblem: { f }, zRange }) => {
+    const grid = createGrid(f);
     const thresholds = createThresholds(zRange);
     return contours()
         .size([grid.n, grid.m])
@@ -73,7 +70,7 @@ const createContours = ({
         .map(transform(grid));
 };
 
-const createGrid = (width, height, f) => {
+const createGrid = (f) => {
     const x0 = -q / 2;
     const x1 = width + q;
     const y0 = -q / 2;
@@ -130,36 +127,31 @@ const createColorScale = (zRange) => {
     return scale;
 };
 
-const addAxes = (svg, { width, height }) => {
-    svg.append("g").call(xAxis, width, height);
-    svg.append("g").call(yAxis);
+const addAxes = (svg) => {
+    svg.append("g").call(createAxis, xScale, axisBottom, 0, 0); // x-axis top
+    svg.append("g").call(createAxis, yScale, axisLeft, width, 0); // y-axis right
+    svg.append("g").call(createAxis, xScale, axisTop, 0, height); // x-axis bottom
+    svg.append("g").call(createAxis, yScale, axisRight, -1, 0); // y-axis left
 };
 
-const xAxis = (g, width, height) => {
-    return g
-        .attr("transform", `translate(0,${height})`)
-        .call(axisTop(xScale).ticks((width / height) * 10))
+const createAxis = (
+    g,
+    axisScale,
+    axisGenerator,
+    translateX = 0,
+    translateY = 0
+) =>
+    g
+        .attr("class", "axis")
+        .attr("transform", `translate(${translateX},${translateY})`)
+        .call(axisGenerator(axisScale).ticks((width / height) * 10))
         .call((g) => g.select(".domain").remove())
         .call((g) =>
             g
                 .selectAll(".tick")
-                .filter((d) => xScale.domain().includes(d))
+                .filter((d) => axisScale.domain().includes(d))
                 .remove()
         );
-};
-
-const yAxis = (g) => {
-    return g
-        .attr("transform", "translate(-1, 0)")
-        .call(axisRight(yScale))
-        .call((g) => g.select(".domain").remove())
-        .call((g) =>
-            g
-                .selectAll(".tick")
-                .filter((d) => yScale.domain().includes(d))
-                .remove()
-        );
-};
 
 const addMouseClickEvent = (contoursGroup, gradientPathGroup, optimizers) => {
     contoursGroup.on("mousedown", (event) => {
@@ -216,20 +208,19 @@ const lineGenerator = line().x(getX).y(getY).curve(curveCardinal);
 // TODO: refine animation
 function drawSinglePath([id, path], gradientPathGroup) {
     // const pathLength = 100;
-
     // gradientPathGroup
-    //     .selectAll()
-    //     .data(path)
-    //     .join("path")
-    //     .attr("d", lineGenerator(path))
-    //     .attr("class", "optimization-path")
-    //     .attr("pathLength", `${pathLength}`)
-    //     .attr("stroke-dasharray", `${pathLength} ${pathLength}`)
-    //     .attr("stroke-dashoffset", `${pathLength}`)
-    //     .transition()
-    //     .duration(2500)
-    //     .ease(easeCubicInOut)
-    //     .attr("stroke-dashoffset", 0);
+    // .selectAll()
+    // .data(path)
+    // .join("path")
+    // .attr("d", lineGenerator(path))
+    // .attr("class", "optimization-path")
+    // .attr("pathLength", `${pathLength}`)
+    // .attr("stroke-dasharray", `${pathLength} ${pathLength}`)
+    // .attr("stroke-dashoffset", `${pathLength}`)
+    // .transition()
+    // .duration(path.length * drawingTime)
+    // .delay(drawingTime + 50)
+    // .attr("stroke-dashoffset", 0);
 
     gradientPathGroup
         .selectAll()
@@ -253,5 +244,5 @@ function drawSinglePath([id, path], gradientPathGroup) {
         .transition()
         .duration(drawingTime)
         .delay(delay())
-        .attr("opacity", 0.8);
+        .attr("opacity", 0.7);
 }

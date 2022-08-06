@@ -38,16 +38,19 @@ export default {
     data() {
         return {
             svgContainerId: "svg-container",
-            width: 700,
-            height: 600,
         };
     },
     methods: {
         renderContourPlot() {
-            render({ ...this.$data, ...this.$props });
+            render({ svgContainerId: this.svgContainerId, ...this.$props });
         },
     },
 };
 </script>
 
-<style></style>
+<style scoped>
+#svg-container {
+    width: 650px;
+    height: 650px;
+}
+</style>
