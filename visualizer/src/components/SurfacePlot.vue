@@ -7,8 +7,7 @@
 <script>
 import plotly from "plotly.js-dist";
 import { extent } from "d3";
-import { applyToMesh } from "@/utils/numjs-util.js";
-import { rangeValidator } from "@/utils/validators.js";
+import { rangeValidator } from "@/utils/prop-validators.js";
 
 export default {
     props: {
@@ -33,26 +32,22 @@ export default {
 
     emits: ["update:modelValue"],
 
-    created() {
-        const { x, y, z } = applyToMesh(
+    mounted() {
+        const step = 0.05;
+        const { x, y, z } = this.get3Dspace(
             this.xRange,
             this.yRange,
-            this.step,
+            step,
             this.optimizationProblem.f
         );
-        this.x = x;
-        this.y = y;
-        this.z = z;
 
         this.$emit("update:modelValue", extent(z.flat()));
-    },
 
-    mounted() {
         const data = [
             {
-                x: this.x,
-                y: this.y,
-                z: this.z,
+                x,
+                y,
+                z,
                 type: "surface",
                 opacity: 0.8,
                 colorscale: "Greens",
@@ -69,13 +64,25 @@ export default {
         plotly.newPlot(this.$refs.plotly, data, layout);
     },
 
-    data() {
-        return {
-            x: [],
-            y: [],
-            z: [],
-            step: 0.05,
-        };
+    methods: {
+        get3Dspace([xMin, xMax], [yMin, yMax], step, f) {
+            const x = [];
+            const y = [];
+            const z = [];
+            const yFinalLength = Math.ceil((yMax - yMin) / step);
+
+            for (let xCoord = xMin; xCoord < xMax; xCoord += step) {
+                x.push(xCoord);
+                let row = [];
+                for (let yCoord = yMin; yCoord < yMax; yCoord += step) {
+                    if (y.length < yFinalLength) y.push(yCoord);
+                    row.push(f(xCoord, yCoord));
+                }
+                z.push(row);
+            }
+
+            return { x, y, z };
+        },
     },
 };
 </script>

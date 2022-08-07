@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { rangeValidator } from "@/utils/validators.js";
+import { rangeValidator } from "@/utils/prop-validators.js";
 import render from "@/components/contour/d3-contour.js";
 
 export default {
