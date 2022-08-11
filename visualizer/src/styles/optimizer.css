@@ -19,9 +19,9 @@
 
 /* must have the same prefix as optimizer id: see optimizers.js */
 .sgd-circle {
-    fill: orange;
+    fill: var(--sgd);
 }
 
 .momentum-circle {
-    fill: indianred;
+    fill: var(--momentum);
 }

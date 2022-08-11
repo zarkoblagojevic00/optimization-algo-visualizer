@@ -1,10 +1,13 @@
 <template>
-    <div :id="svgContainerId"></div>
+    <div class="contour-plot-container">
+        <div class="contour-plot-title">Contour plot</div>
+        <div :id="svgContainerId"></div>
+    </div>
 </template>
 
 <script>
 import { rangeValidator } from "@/utils/prop-validators.js";
-import render from "@/components/contour/d3-contour.js";
+import { render, updateOptimizers } from "@/components/contour/d3-contour.js";
 
 export default {
     props: {
@@ -45,12 +48,28 @@ export default {
             render({ svgContainerId: this.svgContainerId, ...this.$props });
         },
     },
+    watch: {
+        optimizers() {
+            updateOptimizers(this.optimizers);
+        },
+    },
 };
 </script>
 
 <style scoped>
+.contour-plot-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5rem;
+}
+
+.contour-plot-title {
+    font-size: 24px;
+}
+
 #svg-container {
-    width: 650px;
-    height: 650px;
+    padding-top: 1.32rem;
+    width: 555px;
+    height: 555px;
 }
 </style>

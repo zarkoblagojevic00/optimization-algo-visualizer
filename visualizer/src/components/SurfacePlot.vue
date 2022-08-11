@@ -55,10 +55,15 @@ export default {
         ];
 
         const layout = {
-            title: this.optimizationProblem.title,
+            title: {
+                text: "3D surface plot",
+                font: {
+                    size: 20,
+                },
+            },
             autosize: false,
-            width: 450,
-            height: 450,
+            width: 600,
+            height: 640,
         };
 
         plotly.newPlot(this.$refs.plotly, data, layout);
@@ -86,6 +91,3 @@ export default {
     },
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss" scoped></style>

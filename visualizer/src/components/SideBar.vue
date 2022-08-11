@@ -1,0 +1,264 @@
+<template>
+    <div class="sidebar-container">
+        <div class="promo-container">
+            <img
+                class="promo-logo"
+                src="@/assets/logo.png"
+                alt="Opt visualizer"
+            />
+            <div class="promo-app-name">
+                <div class="promo-app-name-big">Optimization</div>
+                <div class="promo-app-name-normal">visualizer</div>
+            </div>
+        </div>
+        <div class="submenu">
+            <div class="submenu-title">Optimizers</div>
+            <div v-for="(optimizer, idx) in activeOptimizers" :key="idx">
+                <div
+                    class="optimizer-menu-item underline-container transition-ease-in"
+                    :class="[
+                        optimizer.active ? 'optimizer-menu-item-active' : '',
+                        optimizer.value.id,
+                    ]"
+                >
+                    <div class="optimizer-color-title">
+                        <div
+                            :class="[
+                                optimizer.active
+                                    ? `${optimizer.value.id}-circle-color`
+                                    : '',
+                                'optimizer-color',
+                            ]"
+                        ></div>
+                        <div class="optimizer-title">
+                            {{ optimizer.value.id }}
+                        </div>
+                    </div>
+                    <div class="optimizer-activate-more">
+                        <div class="tooltip">
+                            <span class="tooltiptext">{{
+                                optimizer.active ? "Deactivate" : "Activate"
+                            }}</span>
+                            <input
+                                class="optimizer-checkbox"
+                                v-model="optimizer.active"
+                                type="checkbox"
+                                :name="`activate-${optimizer.value.id}`"
+                                :id="`activate-${optimizer.value.id}`"
+                            />
+                        </div>
+                        <div class="tooltip">
+                            <span class="tooltiptext">More</span>
+                            <button class="optimizer-more-button"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    props: {
+        optimizers: {
+            type: Array,
+            required: true,
+        },
+        optimizationProblem: {
+            type: Object,
+            required: true,
+        },
+    },
+    data() {
+        return {
+            activeOptimizers: this.optimizers.map((optimizer) => ({
+                value: optimizer,
+                active: true,
+            })),
+        };
+    },
+    emits: ["update:optimizers"],
+    watch: {
+        activeOptimizers: {
+            handler() {
+                console.log("in watch");
+                const newOptimizers = this.activeOptimizers
+                    .filter((opt) => opt.active)
+                    .map((opt) => opt.value);
+                this.$emit("update:optimizers", newOptimizers);
+            },
+            deep: true,
+        },
+    },
+};
+</script>
+
+<style>
+.sidebar-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--background);
+    color: var(--control-border-color);
+}
+
+.promo-container {
+    margin: 1.5em auto;
+    display: flex;
+}
+
+.promo-logo {
+    width: 65px;
+    height: 65px;
+    margin-right: 10px;
+}
+
+.promo-app-name {
+    margin-top: 5px;
+    text-align: left;
+}
+
+.promo-app-name-big {
+    font-size: 2rem;
+}
+
+.promo-app-name-normal {
+    font-size: 1.5rem;
+    position: relative;
+    top: -5px;
+    left: 3px;
+}
+
+.submenu {
+    width: 100%;
+}
+
+.submenu-title {
+    color: var(--control-border-color-focused);
+    text-transform: uppercase;
+    font-size: 0.85em;
+    font-family: "Times New Roman", Times, serif;
+    text-align: left;
+    padding: 0.5rem 1.5rem;
+    border-bottom: 2px solid var(--background-lighter);
+}
+
+.optimizer-menu-item {
+    height: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5em 1.1em;
+    border-bottom: 2px solid var(--background-lighter);
+}
+
+.optimizer-menu-item-active {
+    background-color: #213349;
+    background-size: 100% 3px, auto;
+}
+
+.optimizer-color-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.optimizer-color {
+    width: 0.8rem;
+    height: 0.8rem;
+    border: 3px solid var(--background-lighter);
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.optimizer-activate-more {
+    display: flex;
+    align-items: center;
+}
+
+.optimizer-checkbox {
+    position: relative;
+    width: 1.3rem;
+    height: 1.3rem;
+    accent-color: var(--light-blue);
+    cursor: pointer;
+}
+
+.optimizer-checkbox:not(:checked)::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 82%;
+    width: 80%;
+    border: 2px solid var(--light-blue-dimmer);
+    border-radius: 0.2em;
+    background-color: var(--background);
+    transition: all 0.25s;
+}
+
+.optimizer-checkbox:hover:not(:checked)::after {
+    background-color: var(--background-lighter);
+}
+
+.optimizer-more-button {
+    margin: 0 0 0 4px;
+    padding: 0;
+    width: 1.6rem;
+    height: 1.6rem;
+
+    outline: none;
+    background-color: transparent;
+    background-image: url("@/assets/more-outline-icon.png");
+    background-size: 85%;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 50%;
+    border: 2px transparent solid;
+
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.optimizer-more-button:hover {
+    border-color: var(--background-lighter);
+    background-color: var(--background-lighter);
+    background-image: url("@/assets/more-filled-icon.png");
+}
+
+.sgd.underline-container {
+    background-image: -webkit-linear-gradient(var(--sgd), var(--sgd)),
+        -webkit-linear-gradient(transparent, transparent);
+    background-image: -moz-linear-gradient(var(--sgd), var(--sgd)),
+        -moz-linear-gradient(transparent, transparent);
+    background-image: -ms-linear-gradient(var(--sgd), var(--sgd)),
+        -ms-linear-gradient(transparent, transparent);
+    background-image: -o-linear-gradient(var(--sgd), var(--sgd)),
+        -o-linear-gradient(transparent, transparent);
+    background-image: linear-gradient(var(--sgd), var(--sgd)),
+        linear-gradient(transparent, transparent);
+}
+
+.sgd-circle-color {
+    background: var(--sgd);
+}
+
+.momentum.underline-container {
+    background-image: -webkit-linear-gradient(var(--momentum), var(--momentum)),
+        -webkit-linear-gradient(transparent, transparent);
+    background-image: -moz-linear-gradient(var(--momentum), var(--momentum)),
+        -moz-linear-gradient(transparent, transparent);
+    background-image: -ms-linear-gradient(var(--momentum), var(--momentum)),
+        -ms-linear-gradient(transparent, transparent);
+    background-image: -o-linear-gradient(var(--momentum), var(--momentum)),
+        -o-linear-gradient(transparent, transparent);
+    background-image: linear-gradient(var(--momentum), var(--momentum)),
+        linear-gradient(transparent, transparent);
+}
+
+.momentum-circle-color {
+    background: var(--momentum);
+}
+</style>

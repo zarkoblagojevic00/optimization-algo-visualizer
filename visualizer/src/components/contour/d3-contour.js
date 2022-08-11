@@ -20,11 +20,18 @@ const render = (options) => {
     setupScales(options);
     const contoursGroup = addContours(svg, options);
     const gradientPathGroup = svg.append("g");
-    addMouseClickEvent(contoursGroup, gradientPathGroup, options.optimizers);
+    optimizers = options.optimizers;
+    addMouseClickEvent(contoursGroup, gradientPathGroup);
     addAxes(svg, options);
 };
 
-export { render as default };
+const updateOptimizers = (newOptimizers) => {
+    optimizers = newOptimizers;
+};
+
+export { render, updateOptimizers };
+
+let optimizers; // must be defined as global state for click event listener to work
 
 const width = 650;
 const height = 650;
@@ -153,8 +160,8 @@ const createAxis = (
                 .remove()
         );
 
-const addMouseClickEvent = (contoursGroup, gradientPathGroup, optimizers) => {
-    contoursGroup.on("mousedown", (event) => {
+const addMouseClickEvent = (contoursGroup, gradientPathGroup) => {
+    contoursGroup.on("click", (event) => {
         const startPoint = pointer(event);
         const x0 = [xScale.invert(startPoint[0]), yScale.invert(startPoint[1])];
         startOptimization(gradientPathGroup, x0, optimizers);
@@ -162,7 +169,6 @@ const addMouseClickEvent = (contoursGroup, gradientPathGroup, optimizers) => {
 };
 
 const startOptimization = (gradientPathGroup, x0, optimizers) => {
-    console.log(x0);
     const paths = optimize(x0, optimizers);
     drawAllPaths(gradientPathGroup, paths);
 };
