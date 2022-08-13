@@ -9,10 +9,10 @@ import {
     contours,
     range,
     scaleSequential,
-    interpolateGreens,
     pointer,
     line,
     curveCardinal,
+    interpolateYlGnBu,
 } from "d3";
 
 const render = (options) => {
@@ -59,8 +59,8 @@ const addContours = (svg, options) => {
     return svg
         .append("g")
         .attr("fill", "none")
-        .attr("stroke", "#000")
-        .attr("stroke-opacity", 0.4)
+        .attr("stroke", "#fff")
+        .attr("stroke-opacity", 0.1)
         .selectAll("path")
         .data(contours)
         .join("path")
@@ -127,7 +127,7 @@ const createThresholds = (zRange) => {
 };
 
 const createColorScale = (zRange) => {
-    const scale = scaleSequential(zRange, interpolateGreens);
+    const scale = scaleSequential(zRange, interpolateYlGnBu);
     const interpolator = scale.interpolator(); // read its interpolator;
     const mirror = (t) => interpolator(1 - t); // creates a mirror image of the interpolator;
     scale.interpolator(mirror); // updates the scale’s interpolator;

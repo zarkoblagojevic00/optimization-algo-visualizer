@@ -5,7 +5,7 @@
 
 // iterative step:
 // xNew = x - alpha * gradient(x)
-const baseSGD = (gradF, alpha, iterations) => {
+const baseSGD = (alpha, iterations) => (gradF) => {
     return function* (x0) {
         let nextPoint = x0;
         let x, y, gradX, gradY;
@@ -18,7 +18,7 @@ const baseSGD = (gradF, alpha, iterations) => {
     };
 };
 
-const momentumSGD = (gradF, alpha, omega, iterations) => {
+const momentumSGD = (alpha, omega, iterations) => (gradF) => {
     return function* (x0) {
         let nextPoint = x0;
         let v = [0, 0];
@@ -33,12 +33,14 @@ const momentumSGD = (gradF, alpha, omega, iterations) => {
     };
 };
 
-export const sgd = (gradF, alpha, iterations) => ({
+export const sgd = (alpha, iterations) => ({
     id: "sgd",
-    generatorFactory: baseSGD(gradF, alpha, iterations),
+    title: "Steepest Gradient Descent",
+    factory: baseSGD(alpha, iterations),
 });
 
-export const momentum = (gradF, alpha, omega, iterations) => ({
+export const momentum = (alpha, omega, iterations) => ({
     id: "momentum",
-    generatorFactory: momentumSGD(gradF, alpha, omega, iterations),
+    title: "Gradient Descent with Momentum",
+    factory: momentumSGD(alpha, omega, iterations),
 });

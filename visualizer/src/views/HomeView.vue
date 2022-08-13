@@ -12,7 +12,11 @@
             <div class="plot-container">
                 <contour-plot
                     v-if="zRange.length"
-                    v-bind="{ ...plot, zRange, optimizers }"
+                    v-bind="{
+                        ...plot,
+                        zRange,
+                        optimizers: optimizersWithGradF,
+                    }"
                 />
                 <surface-plot v-bind="plot" v-model="zRange" />
             </div>
@@ -47,12 +51,18 @@ export default {
         };
     },
     created() {
-        const gradF = this.plot.optimizationProblem.gradF;
-        this.optimizers = [
-            sgd(gradF, 0.05, 100),
-            momentum(gradF, 0.05, 0.5, 100),
-        ];
+        this.optimizers = [sgd(0.05, 100), momentum(0.05, 0.5, 100)];
     },
+    computed: {
+        optimizersWithGradF() {
+            const gradF = this.plot.optimizationProblem.gradF;
+            return this.optimizers.map((opt) => ({
+                id: opt.id,
+                generatorFactory: opt.factory(gradF),
+            }));
+        },
+    },
+    watch() {},
 };
 </script>
 

@@ -1,6 +1,7 @@
 .axis {
-    font-size: .9rem;
+    font-size: 0.94rem;
     font-weight: 560;
+    color: rgba(0, 0, 0, 0.6);
 }
 
 /* optimization path and circles */
@@ -13,7 +14,7 @@
 
 .circle {
     r: 5;
-    stroke-opacity: 0.7;
+    stroke-opacity: 0.75;
     stroke: #000;
 }
 

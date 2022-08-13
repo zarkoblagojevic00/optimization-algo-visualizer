@@ -71,5 +71,6 @@ export default {
     padding-top: 1.32rem;
     width: 555px;
     height: 555px;
+    cursor: pointer;
 }
 </style>

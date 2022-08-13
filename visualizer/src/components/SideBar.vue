@@ -13,45 +13,56 @@
         </div>
         <div class="submenu">
             <div class="submenu-title">Optimizers</div>
-            <div v-for="(optimizer, idx) in activeOptimizers" :key="idx">
-                <div
-                    class="optimizer-menu-item underline-container transition-ease-in"
-                    :class="[
-                        optimizer.active ? 'optimizer-menu-item-active' : '',
-                        optimizer.value.id,
-                    ]"
-                >
-                    <div class="optimizer-color-title">
-                        <div
-                            :class="[
-                                optimizer.active
-                                    ? `${optimizer.value.id}-circle-color`
-                                    : '',
-                                'optimizer-color',
-                            ]"
-                        ></div>
-                        <div class="optimizer-title">
-                            {{ optimizer.value.id }}
-                        </div>
+            <div
+                v-for="(optimizer, idx) in activeOptimizers"
+                :key="idx"
+                class="optimizer-menu-item underline-container transition-ease-in"
+                :class="[
+                    optimizer.active ? 'optimizer-menu-item-active' : '',
+                    optimizer.value.id,
+                ]"
+            >
+                <div class="optimizer-color-title">
+                    <div
+                        :class="[
+                            optimizer.active
+                                ? `${optimizer.value.id}-circle-color`
+                                : '',
+                            'optimizer-color',
+                        ]"
+                    ></div>
+                    <div class="optimizer-title">
+                        {{ optimizer.value.id }}
                     </div>
-                    <div class="optimizer-activate-more">
-                        <div class="tooltip">
-                            <span class="tooltiptext">{{
-                                optimizer.active ? "Deactivate" : "Activate"
-                            }}</span>
-                            <input
-                                class="optimizer-checkbox"
-                                v-model="optimizer.active"
-                                type="checkbox"
-                                :name="`activate-${optimizer.value.id}`"
-                                :id="`activate-${optimizer.value.id}`"
-                            />
-                        </div>
-                        <div class="tooltip">
-                            <span class="tooltiptext">More</span>
-                            <button class="optimizer-more-button"></button>
-                        </div>
+                </div>
+                <div class="optimizer-activate-more">
+                    <div class="tooltip">
+                        <span class="tooltiptext">{{
+                            optimizer.active ? "Deactivate" : "Activate"
+                        }}</span>
+                        <input
+                            class="optimizer-checkbox"
+                            v-model="optimizer.active"
+                            type="checkbox"
+                            :name="`activate-${optimizer.value.id}`"
+                            :id="`activate-${optimizer.value.id}`"
+                        />
                     </div>
+                    <div class="tooltip">
+                        <span class="tooltiptext">More</span>
+                        <button
+                            @click="optimizer.modal.active = true"
+                            class="optimizer-more-button"
+                        ></button>
+                    </div>
+                    <!-- Modal -->
+                    <keep-alive>
+                        <component
+                            :is="optimizer.modal.component"
+                            v-model:optimizer="optimizer.value"
+                            v-model:active="optimizer.modal.active"
+                        ></component>
+                    </keep-alive>
                 </div>
             </div>
         </div>
@@ -59,7 +70,12 @@
 </template>
 
 <script>
+import SgdModal from "@/components/modals/SgdModal.vue";
+import MomentumModal from "@/components/modals/MomentumModal.vue";
+const modals = [SgdModal, MomentumModal];
+
 export default {
+    components: { SgdModal },
     props: {
         optimizers: {
             type: Array,
@@ -72,9 +88,13 @@ export default {
     },
     data() {
         return {
-            activeOptimizers: this.optimizers.map((optimizer) => ({
+            activeOptimizers: this.optimizers.map((optimizer, idx) => ({
                 value: optimizer,
                 active: true,
+                modal: {
+                    active: false,
+                    component: modals[idx],
+                },
             })),
         };
     },
@@ -82,7 +102,6 @@ export default {
     watch: {
         activeOptimizers: {
             handler() {
-                console.log("in watch");
                 const newOptimizers = this.activeOptimizers
                     .filter((opt) => opt.active)
                     .map((opt) => opt.value);
@@ -146,7 +165,7 @@ export default {
 }
 
 .optimizer-menu-item {
-    height: 20px;
+    height: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -204,12 +223,12 @@ export default {
 }
 
 .optimizer-more-button {
-    margin: 0 0 0 4px;
+    display: block;
+    margin: 0 0 2px 4px;
     padding: 0;
-    width: 1.6rem;
-    height: 1.6rem;
+    width: 1.8rem;
+    height: 1.8rem;
 
-    outline: none;
     background-color: transparent;
     background-image: url("@/assets/more-outline-icon.png");
     background-size: 85%;
@@ -222,7 +241,8 @@ export default {
     transition: all 0.25s;
 }
 
-.optimizer-more-button:hover {
+.optimizer-more-button:hover,
+.optimizer-more-button:focus {
     border-color: var(--background-lighter);
     background-color: var(--background-lighter);
     background-image: url("@/assets/more-filled-icon.png");

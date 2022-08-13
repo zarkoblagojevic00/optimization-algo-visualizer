@@ -8,6 +8,8 @@
     --control-border-color: #ddd;
     --control-border-color-focused: #a6a6a6;
     --control-invalid-color: #e96161;
+    --default: #aaa;
+    --default-dark: #666;
 
     --background: #1e2834;
     --background-lighter: #334559;
@@ -15,17 +17,19 @@
 
     --light-blue: #7fcff7;
     --light-blue-dimmer: #27a4c7;
+    --light-red: #ff2121;
+
     /* optimizers */
     --sgd: orange;
     --momentum: indianred;
 }
 
 .transition-ease-in {
-    -webkit-transition: all 0.2s ease-in;
-    -moz-transition:    all 0.2s ease-in;
-    -ms-transition:     all 0.2s ease-in;
-    -o-transition:      all 0.2s ease-in;
-    transition:         all 0.2s ease-in;
+    -webkit-transition: all 0.1s ease-in;
+    -moz-transition:    all 0.1s ease-in;
+    -ms-transition:     all 0.1s ease-in;
+    -o-transition:      all 0.1s ease-in;
+    transition:         all 0.1s ease-in;
 }
 
 .underline-container {
@@ -33,6 +37,138 @@
     background-repeat: no-repeat;
     background-position: center bottom;
 }
+
+.input-label {
+    display: inline-block;
+    font-size: 0.95rem;
+    padding-left: 0.3em;
+    margin-bottom: 0.25em;
+    text-align: left;
+    width: 100%;
+}
+
+.control {
+    outline: none;
+    margin: 0 0 12px 0;
+    box-sizing: border-box;
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5em;
+    border-radius: 0.28em;
+    border: 1px solid var(--control-border-color);
+}
+
+.control:hover, 
+.control:focus {
+    border-color: var(--control-border-color-focused);
+}
+
+.control::placeholder {
+    color: var(--control-border-color-focused);
+}
+
+.control:-ms-input-placeholder {
+    color: var(--control-border-color-focused);
+}
+
+.control::-ms-input-placeholder {
+    color: var(--control-border-color-focused);
+}
+
+.control-invalid {
+    border-color: var(--control-invalid-color);
+    box-shadow: 0 0 4px var(--control-invalid-color);
+}
+
+.control-invalid-hint {
+    color: var(--control-invalid-color);
+    padding: 0.3em;
+}
+
+.control-disabled {
+    background: var(--control-border-color);
+    border-color: var(--control-border-color-focused);
+    color: var(--control-border-color-focused);
+}
+
+.control-disabled:hover {
+    cursor: not-allowed;
+}
+
+
+.clickable {
+    outline: none;
+    font-size: 1.025rem;
+    font-weight: 550;
+    border: 2px solid var(--default);
+    border-radius: 0.3em;
+    background-color: transparent;
+    color: var(--default);
+    padding: 0.5em 0.7em;
+    width: auto;
+    height: auto;
+    cursor: pointer;
+}
+
+.fill {
+    --fill-color: var(--default);
+    --fill-color-dark: var(--default-dark);
+    border-color: var(--fill-color);
+    background-color: var(--fill-color);
+    color: var(--white);
+}
+
+.fill:hover, 
+.fill:focus-visible {
+    background-color: var(--fill-color-dark);
+}
+
+.fill.primary {
+    --fill-color: var(--primary);
+    --fill-color-dark: var(--primary-dark);
+}
+
+.fill.primary-comp {
+    --fill-color: var(--primary-comp);
+    --fill-color-dark: var(--primary-comp-dark);
+}
+
+.fill.danger {
+    --fill-color: var(--danger);
+    --fill-color-dark: var(--danger-dark);
+}
+
+
+.outline {
+    --outline-color: var(--default);
+    --outline-color-dark: var(--default-dark);
+    border-color: var(--outline-color);
+    color: var(--outline-color);
+}
+
+.outline:hover,
+.outline:focus-visible {
+    border-color: var(--outline-color-dark);
+    color: var(--outline-color-dark);
+}
+
+.outline.primary {
+    --outline-color: var(--primary);
+    --outline-color-dark: var(--primary-dark);
+}
+
+.outline.primary-comp {
+    --outline-color: var(--primary-comp);
+    --outline-color-dark: var(--primary-comp-dark);
+}
+
+.outline.danger {
+    --outline-color: var(--danger);
+    --outline-color-dark: var(--danger-dark);
+}
+
+
+/* Tooltip */
 
 /* Tooltip container */
 .tooltip {

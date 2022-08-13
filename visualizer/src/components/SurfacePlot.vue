@@ -50,7 +50,7 @@ export default {
                 z,
                 type: "surface",
                 opacity: 0.8,
-                colorscale: "Greens",
+                colorscale: "YlGnBu",
             },
         ];
 
