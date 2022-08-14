@@ -33,8 +33,8 @@ export { render, updateOptimizers };
 
 let optimizers; // must be defined as global state for click event listener to work
 
-const width = 650;
-const height = 650;
+const width = 1300;
+const height = 1025;
 
 const q = 4; // The level of detail, e.g., sample every 4 pixels in x and y.
 const nContours = 30;
@@ -44,8 +44,7 @@ const createSvg = ({ svgContainerId }) =>
     select(`#${svgContainerId}`)
         .append("svg")
         .attr("viewBox", [0, 0, width, height])
-        .style("display", "block")
-        .style("padding", "20");
+        .style("display", "block");
 
 let xScale, yScale;
 const setupScales = ({ xRange, yRange }) => {

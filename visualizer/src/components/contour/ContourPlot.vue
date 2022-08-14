@@ -1,8 +1,5 @@
 <template>
-    <div class="contour-plot-container">
-        <div class="contour-plot-title">Contour plot</div>
-        <div :id="svgContainerId"></div>
-    </div>
+    <div :id="svgContainerId"></div>
 </template>
 
 <script>
@@ -57,20 +54,25 @@ export default {
 </script>
 
 <style scoped>
-.contour-plot-container {
-    display: flex;
-    flex-direction: column;
-    margin-top: 1.5rem;
-}
-
-.contour-plot-title {
-    font-size: 24px;
-}
-
 #svg-container {
-    padding-top: 1.32rem;
-    width: 555px;
-    height: 555px;
+    position: relative;
+    height: 0;
+    width: 100%;
+    padding: 0;
+    padding-bottom: 5%;
+    /* height: 100%;
+    margin: 0;
+    padding: 0; */
     cursor: pointer;
+}
+
+#svg-container svg {
+    /* width: 100%;
+    height: 100vh; */
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
 }
 </style>

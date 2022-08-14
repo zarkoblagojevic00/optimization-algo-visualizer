@@ -1,7 +1,5 @@
 <template>
-    <div class="hello">
-        <div ref="plotly"></div>
-    </div>
+    <div class="surface-container" ref="plotly"></div>
 </template>
 
 <script>
@@ -51,19 +49,21 @@ export default {
                 type: "surface",
                 opacity: 0.8,
                 colorscale: "YlGnBu",
+                showscale: false,
             },
         ];
 
         const layout = {
-            title: {
-                text: "3D surface plot",
-                font: {
-                    size: 20,
-                },
+            margin: {
+                autoexpand: false,
+                t: 40,
+                r: 20,
+                b: 20,
+                l: 20,
             },
             autosize: false,
-            width: 600,
-            height: 640,
+            width: 300,
+            height: 300,
         };
 
         plotly.newPlot(this.$refs.plotly, data, layout);
@@ -91,3 +91,9 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+.surface-container {
+    padding: 0.5em;
+}
+</style>

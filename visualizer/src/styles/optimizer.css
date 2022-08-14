@@ -1,7 +1,16 @@
 .axis {
-    font-size: 0.94rem;
+    font-size: 0.95rem;
     font-weight: 560;
     color: rgba(0, 0, 0, 0.6);
+}
+
+@media screen 
+  and (min-device-width: 1200px) 
+  and (max-device-width: 1600px) 
+  and (-webkit-min-device-pixel-ratio: 1) {
+    .axis {
+        font-size: 1.2rem;
+    }
 }
 
 /* optimization path and circles */

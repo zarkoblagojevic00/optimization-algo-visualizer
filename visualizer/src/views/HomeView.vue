@@ -6,26 +6,24 @@
                 :optimizationProblem="plot.optimizationProblem"
             />
         </aside>
-
-        <div class="content-container">
-            <div class="plot-title">{{ plot.optimizationProblem.title }}</div>
-            <div class="plot-container">
-                <contour-plot
-                    v-if="zRange.length"
-                    v-bind="{
-                        ...plot,
-                        zRange,
-                        optimizers: optimizersWithGradF,
-                    }"
-                />
-                <surface-plot v-bind="plot" v-model="zRange" />
-            </div>
+        <div class="contour-plot-container">
+            <contour-plot
+                v-if="zRange.length"
+                v-bind="{
+                    ...plot,
+                    zRange,
+                    optimizers: optimizersWithGradF,
+                }"
+            />
         </div>
+        <aside class="function-picker-container">
+            <surface-plot v-bind="plot" v-model="zRange" />
+        </aside>
     </div>
 </template>
 
 <script>
-import { quadratic2mins } from "@/optimization/optimization-problems.js";
+import { goldsteinPrice } from "@/optimization/optimization-problems.js";
 import { sgd, momentum } from "@/optimization/optimizers.js";
 
 import SideBar from "@/components/SideBar.vue";
@@ -44,7 +42,7 @@ export default {
             plot: {
                 xRange: [-2, 2],
                 yRange: [-2, 2],
-                optimizationProblem: quadratic2mins,
+                optimizationProblem: goldsteinPrice,
             },
             zRange: [],
             optimizers: [],
@@ -73,22 +71,28 @@ export default {
 }
 
 .aside-container {
-    flex: 20%;
+    flex: 18%;
 }
 
-.content-container {
-    flex: 80%;
-    padding-top: 1.5em;
-    display: flex;
-    flex-direction: column;
+.contour-plot-container {
+    flex: 65%;
 }
 
-.plot-title {
-    font-size: 2em;
+.function-picker-container {
+    flex: 22%;
 }
 
-.plot-container {
-    display: flex;
-    justify-content: space-around;
+@media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    .aside-container {
+        flex: 20%;
+    }
+
+    .contour-plot-container {
+        flex: 60%;
+    }
+
+    .function-picker-container {
+        flex: 20%;
+    }
 }
 </style>
