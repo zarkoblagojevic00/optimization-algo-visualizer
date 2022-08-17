@@ -4,7 +4,11 @@
 
 <script>
 import { rangeValidator } from "@/utils/prop-validators.js";
-import { render, updateOptimizers } from "@/components/contour/d3-contour.js";
+import {
+    render,
+    rerender,
+    updateOptimizers,
+} from "@/components/contour/d3-contour.js";
 
 export default {
     props: {
@@ -33,7 +37,7 @@ export default {
         },
     },
     mounted() {
-        this.renderContourPlot();
+        this.renderPlot();
     },
     data() {
         return {
@@ -41,13 +45,28 @@ export default {
         };
     },
     methods: {
-        renderContourPlot() {
+        renderPlot() {
             render({ svgContainerId: this.svgContainerId, ...this.$props });
+        },
+        rerenderPlot() {
+            rerender({ svgContainerId: this.svgContainerId, ...this.$props });
         },
     },
     watch: {
         optimizers() {
             updateOptimizers(this.optimizers);
+        },
+        xRange() {
+            this.rerenderPlot();
+        },
+        yRange() {
+            this.rerenderPlot();
+        },
+        zRange() {
+            this.rerenderPlot();
+        },
+        optimizationProblem() {
+            this.rerenderPlot();
         },
     },
 };

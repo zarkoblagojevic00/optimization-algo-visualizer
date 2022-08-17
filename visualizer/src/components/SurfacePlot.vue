@@ -9,6 +9,10 @@ import { rangeValidator } from "@/utils/prop-validators.js";
 
 export default {
     props: {
+        optimizationProblem: {
+            type: Object,
+            required: true,
+        },
         xRange: {
             type: Array,
             required: true,
@@ -19,28 +23,17 @@ export default {
             required: true,
             validator: rangeValidator,
         },
-        optimizationProblem: {
-            type: Object,
+        //only zRange is updated
+        zRange: {
+            type: Array,
             required: true,
         },
-        modelValue: {
-            type: Array,
-        },
     },
-
-    emits: ["update:modelValue"],
-
+    emits: ["update:zRange"],
     mounted() {
-        const step = 0.05;
-        const { x, y, z } = this.get3Dspace(
-            this.xRange,
-            this.yRange,
-            step,
-            this.optimizationProblem.f
-        );
-
-        this.$emit("update:modelValue", extent(z.flat()));
-
+        const { x, y, z } = this.surfaceData;
+        const zRange = extent(z.flat());
+        this.$emit("update:zRange", zRange);
         const data = [
             {
                 x,
@@ -61,12 +54,43 @@ export default {
                 b: 20,
                 l: 20,
             },
+            paper_bgcolor: "#c5dbf5",
+            plot_bgcolor: "#c5dbf5",
             autosize: false,
             width: 300,
             height: 300,
         };
 
         plotly.newPlot(this.$refs.plotly, data, layout);
+    },
+    data() {
+        return {
+            step: 0.05,
+        };
+    },
+    computed: {
+        surfaceData() {
+            return this.get3Dspace(
+                this.xRange,
+                this.yRange,
+                this.step,
+                this.optimizationProblem.f
+            );
+        },
+    },
+    watch: {
+        surfaceData: {
+            handler({ x, y, z }) {
+                const zRange = extent(z.flat());
+                this.$emit("update:zRange", zRange);
+                plotly.restyle(
+                    this.$refs.plotly,
+                    { x: [x], y: [y], z: [z] },
+                    0
+                );
+            },
+            flush: "post",
+        },
     },
 
     methods: {

@@ -1,58 +1,44 @@
 <template>
     <div class="whole-page">
         <aside class="aside-container">
-            <side-bar
-                v-model:optimizers="optimizers"
-                :optimizationProblem="plot.optimizationProblem"
-            />
+            <optimizer-picker v-model:optimizers="optimizers" />
         </aside>
         <div class="contour-plot-container">
             <contour-plot
-                v-if="zRange.length"
+                v-if="plot.zRange && plot.zRange.length"
                 v-bind="{
                     ...plot,
-                    zRange,
                     optimizers: optimizersWithGradF,
                 }"
             />
         </div>
         <aside class="function-picker-container">
-            <surface-plot v-bind="plot" v-model="zRange" />
+            <function-picker v-model="plot"></function-picker>
         </aside>
     </div>
 </template>
 
 <script>
-import { goldsteinPrice } from "@/optimization/optimization-problems.js";
-import { sgd, momentum } from "@/optimization/optimizers.js";
-
-import SideBar from "@/components/SideBar.vue";
-import SurfacePlot from "@/components/SurfacePlot.vue";
+import OptimizerPicker from "@/components/OptimizerPicker.vue";
 import ContourPlot from "@/components/contour/ContourPlot.vue";
+import FunctionPicker from "@/components/FunctionPicker.vue";
 
 export default {
     name: "HomeView",
     components: {
-        SurfacePlot,
         ContourPlot,
-        SideBar,
+        OptimizerPicker,
+        FunctionPicker,
     },
     data() {
         return {
-            plot: {
-                xRange: [-2, 2],
-                yRange: [-2, 2],
-                optimizationProblem: goldsteinPrice,
-            },
-            zRange: [],
+            plot: {},
             optimizers: [],
         };
     },
-    created() {
-        this.optimizers = [sgd(0.05, 100), momentum(0.05, 0.5, 100)];
-    },
     computed: {
         optimizersWithGradF() {
+            if (!this.plot.xRange) return [];
             const gradF = this.plot.optimizationProblem.gradF;
             return this.optimizers.map((opt) => ({
                 id: opt.id,

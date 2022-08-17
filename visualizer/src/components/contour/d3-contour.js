@@ -16,22 +16,23 @@ import {
 } from "d3";
 
 const render = (options) => {
-    const svg = createSvg(options);
-    setupScales(options);
-    const contoursGroup = addContours(svg, options);
-    const gradientPathGroup = svg.append("g");
-    optimizers = options.optimizers;
-    addMouseClickEvent(contoursGroup, gradientPathGroup);
-    addAxes(svg, options);
+    svg = createSvg(options);
+    renderSvg(svg, options);
+};
+
+const rerender = (options) => {
+    svg.selectAll("*").remove();
+    renderSvg(svg, options);
 };
 
 const updateOptimizers = (newOptimizers) => {
     optimizers = newOptimizers;
 };
 
-export { render, updateOptimizers };
+export { render, rerender, updateOptimizers };
 
 let optimizers; // must be defined as global state for click event listener to work
+let svg;
 
 const width = 1300;
 const height = 1025;
@@ -45,6 +46,15 @@ const createSvg = ({ svgContainerId }) =>
         .append("svg")
         .attr("viewBox", [0, 0, width, height])
         .style("display", "block");
+
+const renderSvg = (svg, options) => {
+    setupScales(options);
+    const contoursGroup = addContours(svg, options);
+    const gradientPathGroup = svg.append("g");
+    optimizers = options.optimizers;
+    addMouseClickEvent(contoursGroup, gradientPathGroup);
+    addAxes(svg, options);
+};
 
 let xScale, yScale;
 const setupScales = ({ xRange, yRange }) => {

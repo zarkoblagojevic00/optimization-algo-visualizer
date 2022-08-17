@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <div class="optimizer-activate-more">
-                    <div class="tooltip">
+                    <div class="tooltip top-left">
                         <span class="tooltiptext">{{
                             optimizer.active ? "Deactivate" : "Activate"
                         }}</span>
@@ -48,7 +48,7 @@
                             :id="`activate-${optimizer.value.id}`"
                         />
                     </div>
-                    <div class="tooltip">
+                    <div class="tooltip top-left">
                         <span class="tooltiptext">More</span>
                         <button
                             @click="optimizer.modal.active = true"
@@ -70,8 +70,11 @@
 </template>
 
 <script>
+import { sgd, momentum } from "@/optimization/optimizers.js";
 import SgdModal from "@/components/modals/SgdModal.vue";
 import MomentumModal from "@/components/modals/MomentumModal.vue";
+
+const initOptimizers = [sgd(0.05, 100), momentum(0.05, 0.5, 100)];
 const modals = [SgdModal, MomentumModal];
 
 export default {
@@ -81,24 +84,23 @@ export default {
             type: Array,
             required: true,
         },
-        optimizationProblem: {
-            type: Object,
-            required: true,
-        },
     },
     data() {
         return {
-            activeOptimizers: this.optimizers.map((optimizer, idx) => ({
-                value: optimizer,
-                active: true,
-                modal: {
-                    active: false,
-                    component: modals[idx],
-                },
-            })),
+            activeOptimizers: [],
         };
     },
     emits: ["update:optimizers"],
+    created() {
+        this.activeOptimizers = initOptimizers.map((optimizer, idx) => ({
+            value: optimizer,
+            active: true,
+            modal: {
+                active: false,
+                component: modals[idx],
+            },
+        }));
+    },
     watch: {
         activeOptimizers: {
             handler() {
@@ -108,12 +110,13 @@ export default {
                 this.$emit("update:optimizers", newOptimizers);
             },
             deep: true,
+            immediate: true,
         },
     },
 };
 </script>
 
-<style>
+<style scoped>
 .sidebar-container {
     height: 100%;
     display: flex;
@@ -148,20 +151,6 @@ export default {
     position: relative;
     top: -5px;
     left: 3px;
-}
-
-.submenu {
-    width: 100%;
-}
-
-.submenu-title {
-    color: var(--control-border-color-focused);
-    text-transform: uppercase;
-    font-size: 0.85em;
-    font-family: "Times New Roman", Times, serif;
-    text-align: left;
-    padding: 0.5rem 1.5rem;
-    border-bottom: 2px solid var(--background-lighter);
 }
 
 .optimizer-menu-item {
@@ -223,8 +212,7 @@ export default {
 }
 
 .optimizer-more-button {
-    display: block;
-    margin: 0 0 2px 4px;
+    margin: 0 1px 2px 4px;
     padding: 0;
     width: 1.8rem;
     height: 1.8rem;
@@ -243,7 +231,7 @@ export default {
 
 .optimizer-more-button:hover,
 .optimizer-more-button:focus {
-    border-color: var(--background-lighter);
+    border-color: #385472;
     background-color: var(--background-lighter);
     background-image: url("@/assets/more-filled-icon.png");
 }

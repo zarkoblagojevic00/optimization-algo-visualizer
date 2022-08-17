@@ -8,13 +8,21 @@ const getGradientApproximator = (f) => {
 };
 
 // f(x) = x_1^2 + x_2^2
-const quadratic = (x, y) => 0.5 * (x ** 2 + y ** 2);
+const quadraticFactory = (a, b, c) => (x, y) =>
+    a * x ** 2 + b * x * y + c * y ** 2;
 
-const quadratic2GaussianCurves = (x, y) =>
-    -2 * Math.exp(-((x - 1) * (x - 1) + y * y) / 0.2) +
-    -3 * Math.exp(-((x + 1) * (x + 1) + y * y) / 0.2) +
-    x * x +
-    y * y;
+const quadratic2Gaussians =
+    (
+        { min1Deepness, min1Coord: [xmin1, ymin1], min1Steepness },
+        { min2Deepness, min2Coord: [xmin2, ymin2], min2Steepness }
+    ) =>
+    (x, y) =>
+        0.5 * x ** 2 +
+        0.5 * y ** 2 -
+        min1Deepness *
+            Math.exp(-((x - xmin1) ** 2 + (y - ymin1) ** 2) * min1Steepness) +
+        -min2Deepness *
+            Math.exp(-((x - xmin2) ** 2 + (y - ymin2) ** 2) * min2Steepness);
 
 const goldsteinPriceTest = (x, y) =>
     Math.log(
@@ -31,16 +39,24 @@ const goldsteinPriceTest = (x, y) =>
                         27 * y ** 2))
     );
 
-export const baseQuadratic = {
-    title: "Base Quadratic | z = x^2 + y^2",
-    f: quadratic,
-    gradF: getGradientApproximator(quadratic),
+export const quadratic = (a, b, c) => {
+    const quad = quadraticFactory(a, b, c);
+    return {
+        id: "quad",
+        title: "Quadratic function",
+        f: quad,
+        gradF: getGradientApproximator(quad),
+    };
 };
 
-export const quadratic2mins = {
-    title: "Quadratic with 2 Gussian curves",
-    f: quadratic2GaussianCurves,
-    gradF: getGradientApproximator(quadratic2GaussianCurves),
+export const quadratic2mins = (min1, min2) => {
+    const quad2mins = quadratic2Gaussians(min1, min2);
+    return {
+        id: "quad2mins",
+        title: "Quadratic with 2 Gaussians",
+        f: quad2mins,
+        gradF: getGradientApproximator(quad2mins),
+    };
 };
 
 export const goldsteinPrice = {
