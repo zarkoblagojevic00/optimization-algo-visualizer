@@ -25,7 +25,6 @@ export default {
         },
         //only zRange is updated
         zRange: {
-            type: Array,
             required: true,
         },
     },

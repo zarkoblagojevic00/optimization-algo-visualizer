@@ -4,31 +4,32 @@
         <modal-dialog
             v-model:isActive="active"
             :modalTitle="optimizer.title"
+            :onOpen="focusInput"
             :onSuccess="updateOptimizer"
-            :onClose="resetOptimizer"
+            :onCancel="resetForm"
         >
             <div class="control-wrapper">
                 <label id="alpha" class="input-label">
                     <b>&alpha;</b> - alpha, learning rate
                 </label>
                 <input
-                    ref="alpha"
+                    ref="firstInput"
                     class="control transition-ease"
                     type="number"
                     name="alpha"
                     id="alpha"
-                    v-model="alpha"
+                    v-model="form.alpha"
                 />
             </div>
             <div class="control-wrapper">
-                <label id="iter" class="input-label"> Iterations number </label>
-                <input
-                    class="control transition-ease"
-                    type="number"
-                    name="iter"
-                    id="iter"
-                    v-model="iterations"
-                />
+                <label id="iter" class="input-label">
+                    Number of Iterations [1, 500]
+                </label>
+                <num-input-range
+                    v-model="form.iterations"
+                    :min="0"
+                    :max="501"
+                ></num-input-range>
             </div>
         </modal-dialog>
     </div>
@@ -36,9 +37,16 @@
 
 <script>
 import ModalDialog from "@/components/modals/ModalDialog.vue";
+import NumInputRange from "@/components/number-range/NumInputRange.vue";
 import { sgd } from "@/optimization/optimizers.js";
+import ModalFormMixin from "@/mixins/modal-form-mixin.js";
 
 export default {
+    components: {
+        ModalDialog,
+        NumInputRange,
+    },
+    mixins: [ModalFormMixin],
     props: {
         optimizer: {
             type: Object,
@@ -50,38 +58,31 @@ export default {
         },
     },
     emits: ["update:optimizer", "update:active"],
-    components: {
-        ModalDialog,
-    },
     data() {
         return {
-            alpha: 0.05,
-            iterations: 100,
-            savedAlpha: 0.05,
-            savedIterations: 100,
+            form: {
+                alpha: 0.05,
+                iterations: 100,
+            },
         };
     },
     watch: {
         active(newValue) {
             this.$emit("update:active", newValue);
-            if (newValue) {
-                setTimeout(() => {
-                    this.$refs.alpha.focus();
-                }, 50);
-            }
         },
     },
     methods: {
-        resetOptimizer() {
-            this.alpha = this.savedAlpha;
-            this.iterations = this.savedIterations;
+        focusInput() {
+            setTimeout(() => {
+                this.$refs.firstInput.focus();
+            }, 50);
         },
         updateOptimizer() {
-            this.savedAlpha = this.alpha;
-            this.savedIterations = this.iterations;
+            this.updateForm();
+
             this.$emit(
                 "update:optimizer",
-                sgd(this.savedAlpha, this.savedIterations)
+                sgd(this.savedForm.alpha, this.savedForm.iterations)
             );
         },
     },

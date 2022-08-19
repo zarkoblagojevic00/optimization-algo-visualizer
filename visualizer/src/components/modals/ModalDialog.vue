@@ -2,7 +2,7 @@
     <div
         class="modal"
         :class="{ 'modal-active': isActive }"
-        @click.self="closeModal"
+        @mousedown.self="cancel"
         @keydown.enter="saveChanges"
     >
         <div class="modal-card">
@@ -10,7 +10,7 @@
                 <p class="modal-card-title">
                     {{ modalTitle }}
                 </p>
-                <button @click="closeModal" class="modal-close"></button>
+                <button @click="cancel" class="modal-close"></button>
             </header>
 
             <section class="modal-card-body">
@@ -25,7 +25,7 @@
                 </button>
                 <button
                     class="clickable outline transition-ease-in"
-                    @click="closeModal"
+                    @click="cancel"
                 >
                     Cancel
                 </button>
@@ -47,33 +47,54 @@ export default {
         },
         onSuccess: {
             type: Function,
-            required: true,
+            default: () => null,
+        },
+        onCancel: {
+            type: Function,
+            default: () => null,
+        },
+        onOpen: {
+            type: Function,
+            default: () => null,
         },
         onClose: {
             type: Function,
-            required: true,
+            default: () => null,
         },
     },
     emits: ["update:isActive"],
     mounted() {
-        window.addEventListener("keydown", this.closeActiveModalOnEscape);
+        window.addEventListener("keydown", this.cancelOnEscape);
     },
     unmounted() {
-        window.removeEventListener("keydown", this.closeActiveModalOnEscape);
+        window.removeEventListener("keydown", this.cancelOnEscape);
+    },
+
+    watch: {
+        isActive(newValue) {
+            if (newValue) {
+                this.onOpen();
+            } else {
+                this.onClose();
+            }
+        },
     },
 
     methods: {
         closeModal() {
-            this.onClose();
             this.$emit("update:isActive", false);
         },
-        closeActiveModalOnEscape(event) {
+        cancelOnEscape(event) {
             if (event.key === "Escape" && this.isActive) {
-                this.closeModal();
+                this.cancel();
             }
         },
         saveChanges() {
             this.onSuccess();
+            this.closeModal();
+        },
+        cancel() {
+            this.onCancel();
             this.closeModal();
         },
     },
@@ -182,6 +203,19 @@ export default {
     flex-shrink: 1;
     overflow: auto;
     padding: 1.2rem;
+}
+
+.modal-card-section-title {
+    text-align: left;
+    font-size: 1.3rem;
+    padding: 0.2em 0em;
+    border-bottom: 1px solid #ddd;
+    color: #363636;
+}
+
+.modal-card-section {
+    text-align: justify;
+    padding: 0em 0.5em;
 }
 
 .modal-close {

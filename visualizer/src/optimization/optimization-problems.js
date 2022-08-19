@@ -13,16 +13,16 @@ const quadraticFactory = (a, b, c) => (x, y) =>
 
 const quadratic2Gaussians =
     (
-        { min1Deepness, min1Coord: [xmin1, ymin1], min1Steepness },
-        { min2Deepness, min2Coord: [xmin2, ymin2], min2Steepness }
+        { min1Deepness, min1Coord: [xmin1, ymin1], min1Flatness },
+        { min2Deepness, min2Coord: [xmin2, ymin2], min2Flatness }
     ) =>
     (x, y) =>
         0.5 * x ** 2 +
         0.5 * y ** 2 -
         min1Deepness *
-            Math.exp(-((x - xmin1) ** 2 + (y - ymin1) ** 2) * min1Steepness) +
+            Math.exp(-((x - xmin1) ** 2 + (y - ymin1) ** 2) / min1Flatness) +
         -min2Deepness *
-            Math.exp(-((x - xmin2) ** 2 + (y - ymin2) ** 2) * min2Steepness);
+            Math.exp(-((x - xmin2) ** 2 + (y - ymin2) ** 2) / min2Flatness);
 
 const goldsteinPriceTest = (x, y) =>
     Math.log(

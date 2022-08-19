@@ -12,20 +12,20 @@
             <div class="submenu-title">Functions</div>
             <div
                 v-for="problem in problems"
-                :key="problem.optimizationProblem.id"
+                :key="problem.plot.optimizationProblem.id"
                 class="function-menu-item underline-container transition-ease-in"
                 :class="{
                     'function-menu-item-active':
-                        activeId === problem.optimizationProblem.id,
+                        activeId === problem.plot.optimizationProblem.id,
                 }"
             >
                 <div class="function-title">
-                    {{ problem.optimizationProblem.title }}
+                    {{ problem.plot.optimizationProblem.title }}
                 </div>
                 <div class="function-activate-more">
                     <div class="tooltip top-right">
                         <span class="tooltiptext">{{
-                            activeId === problem.optimizationProblem.id
+                            activeId === problem.plot.optimizationProblem.id
                                 ? "Active"
                                 : "Pick"
                         }}</span>
@@ -33,23 +33,25 @@
                             class="function-radio"
                             v-model="activeId"
                             type="radio"
-                            :value="problem.optimizationProblem.id"
-                            :name="`activate-${problem.optimizationProblem.id}`"
-                            :id="`activate-${problem.optimizationProblem.id}`"
+                            :value="problem.plot.optimizationProblem.id"
+                            :name="`activate-${problem.plot.optimizationProblem.id}`"
+                            :id="`activate-${problem.plot.optimizationProblem.id}`"
                         />
                     </div>
                     <div class="tooltip top-right">
                         <span class="tooltiptext">More</span>
-                        <button class="function-more-button"></button>
+                        <button
+                            class="function-more-button"
+                            @click="problem.modal.active = true"
+                        ></button>
                     </div>
-                    <!-- Modal
-                    <keep-alive>
-                        <component
-                            :is="optimizer.modal.component"
-                            v-model:optimizer="optimizer.value"
-                            v-model:active="optimizer.modal.active"
-                        ></component>
-                    </keep-alive> -->
+                    <!-- Modal -->
+                    <component
+                        :key="problem.plot.optimizationProblem.id"
+                        :is="problem.modal.component"
+                        v-model:plot="problem.plot"
+                        v-model:active="problem.modal.active"
+                    ></component>
                 </div>
             </div>
         </div>
@@ -57,24 +59,32 @@
 </template>
 
 <script>
-import SurfacePlot from "@/components/SurfacePlot.vue";
+import SurfacePlot from "@/components/function-picker/SurfacePlot.vue";
 import {
     quadratic,
     quadratic2mins,
 } from "@/optimization/optimization-problems.js";
 
+import QuadraticModal from "@/components/function-picker/modals/QuadraticModal.vue";
+import Quadratic2GaussiansModal from "@/components/function-picker/modals/Quadratic2GaussiansModal.vue";
+import { shallowRef } from "vue";
+const modals = [
+    shallowRef(QuadraticModal),
+    shallowRef(Quadratic2GaussiansModal),
+];
+
 const functions = [
-    quadratic(1, 0, 4),
+    quadratic(1, 0, 2),
     quadratic2mins(
         {
             min1Deepness: 2,
             min1Coord: [1, 0],
-            min1Steepness: 5,
+            min1Flatness: 0.2,
         },
         {
             min2Deepness: 3,
             min2Coord: [-1, 0],
-            min2Steepness: 5,
+            min2Flatness: 0.2,
         }
     ),
 ];
@@ -93,28 +103,43 @@ export default {
     data() {
         return {
             activeId: "",
-            problems: functions.map((prob) => ({
-                xRange: [-2, 2],
-                yRange: [-2, 2],
-                // zRange will be calculated by FunctionPicker/SurfacePlot
-                // zRange is needed for rendering contour plot correctly
-                zRange: [],
-                optimizationProblem: prob,
+            problems: functions.map((prob, idx) => ({
+                plot: {
+                    xRange: [-2, 2],
+                    yRange: [-2, 2],
+                    // zRange will be calculated by FunctionPicker/SurfacePlot
+                    // zRange is needed for rendering contour plot correctly
+                    zRange: [],
+                    optimizationProblem: prob,
+                },
+                modal: {
+                    active: false,
+                    component: modals[idx],
+                },
             })),
         };
     },
     created() {
-        this.activeId = this.problems[0].optimizationProblem.id;
+        this.activeId = this.problems[0].plot.optimizationProblem.id;
     },
 
     watch: {
         activeId: {
             handler(newValue) {
                 const problem = this.problems.find(
-                    (prob) => prob.optimizationProblem.id === newValue
+                    (prob) => prob.plot.optimizationProblem.id === newValue
                 );
-                this.$emit("update:modelValue", problem);
+                this.$emit("update:modelValue", problem.plot);
             },
+        },
+        problems: {
+            handler() {
+                const newPlot = this.problems.find(
+                    (prob) => prob.plot.optimizationProblem.id === this.activeId
+                ).plot;
+                this.$emit("update:modelValue", newPlot);
+            },
+            deep: true,
         },
     },
 };
@@ -131,7 +156,8 @@ export default {
 }
 
 .submenu-title {
-    color: var(--background-lighter);
+    color: #0a2249;
+    border-bottom-color: #a6c3e4;
 }
 
 .function-menu-item {
@@ -140,7 +166,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     padding: 1.5em 1.1em;
-    border-bottom: 2px solid var(--background-lighter);
+    border-bottom: 2px solid #a6c3e4;
 }
 
 .function-menu-item-active {

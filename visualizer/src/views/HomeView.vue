@@ -19,9 +19,9 @@
 </template>
 
 <script>
-import OptimizerPicker from "@/components/OptimizerPicker.vue";
+import OptimizerPicker from "@/components/optimizer-picker/OptimizerPicker.vue";
 import ContourPlot from "@/components/contour/ContourPlot.vue";
-import FunctionPicker from "@/components/FunctionPicker.vue";
+import FunctionPicker from "@/components/function-picker/FunctionPicker.vue";
 
 export default {
     name: "HomeView",

@@ -4,6 +4,9 @@
 
 <style src="@/styles/root.css"></style>
 <style src="@/styles/optimizer.css"></style>
+<style
+    src="@/assets/fonts/Classical Serif Italic/cmun-classical-serif-italic.css"
+></style>
 <style>
 html,
 body {

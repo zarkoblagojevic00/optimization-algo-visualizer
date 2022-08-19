@@ -56,13 +56,12 @@
                         ></button>
                     </div>
                     <!-- Modal -->
-                    <keep-alive>
-                        <component
-                            :is="optimizer.modal.component"
-                            v-model:optimizer="optimizer.value"
-                            v-model:active="optimizer.modal.active"
-                        ></component>
-                    </keep-alive>
+                    <component
+                        :key="optimizer.value.id"
+                        :is="optimizer.modal.component"
+                        v-model:optimizer="optimizer.value"
+                        v-model:active="optimizer.modal.active"
+                    ></component>
                 </div>
             </div>
         </div>
@@ -71,11 +70,12 @@
 
 <script>
 import { sgd, momentum } from "@/optimization/optimizers.js";
-import SgdModal from "@/components/modals/SgdModal.vue";
-import MomentumModal from "@/components/modals/MomentumModal.vue";
+import SgdModal from "@/components/optimizer-picker/modals/SgdModal.vue";
+import MomentumModal from "@/components/optimizer-picker/modals/MomentumModal.vue";
+import { shallowRef } from "vue";
 
 const initOptimizers = [sgd(0.05, 100), momentum(0.05, 0.5, 100)];
-const modals = [SgdModal, MomentumModal];
+const modals = [shallowRef(SgdModal), shallowRef(MomentumModal)];
 
 export default {
     components: { SgdModal },

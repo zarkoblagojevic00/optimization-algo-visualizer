@@ -38,6 +38,31 @@
     background-position: center bottom;
 }
 
+.form-horizontal {
+    display: flex;
+    justify-content: flex-start;
+    padding: 0em 1em;
+    align-items: center;
+}
+
+.form-horizontal .control-wrapper:not(:last-child) {
+    margin-right: 1.25rem;
+}
+
+.form-two-column {
+    display: flex;
+    justify-content: space-around;
+}
+
+.form-two-column .form {
+    width: 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
 .input-label {
     display: inline-block;
     font-size: 0.95rem;
@@ -45,6 +70,12 @@
     margin-bottom: 0.25em;
     text-align: left;
     width: 100%;
+}
+
+.math {
+    font-family: 'Computer Modern Classical Serif Italic';
+    font-size: 1.1rem;
+    font-weight: bold;
 }
 
 .control {
@@ -242,8 +273,9 @@
 .submenu-title {
     color: var(--control-border-color-focused);
     text-transform: uppercase;
-    font-size: 0.85em;
-    font-family: "Times New Roman", Times, serif;
+    font-size: 0.75rem;
+    font-weight: 550;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     text-align: left;
     padding: 0.5rem 1.5rem;
     border-bottom: 2px solid var(--background-lighter);
