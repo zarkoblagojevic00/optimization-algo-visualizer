@@ -1,4 +1,4 @@
-const getGradientApproximator = (f) => {
+export const getGradientApproximator = (f) => {
     const h = 1e-7;
     return (x, y) => {
         const gradX = (f(x + h, y) - f(x, y)) / h;
@@ -43,7 +43,7 @@ export const quadratic = (a, b, c) => {
     const quad = quadraticFactory(a, b, c);
     return {
         id: "quad",
-        title: "Quadratic function",
+        title: "Quadratic",
         f: quad,
         gradF: getGradientApproximator(quad),
     };

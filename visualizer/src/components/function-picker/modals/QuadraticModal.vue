@@ -8,14 +8,16 @@
             :onSuccess="updatePlot"
             :onCancel="resetForm"
         >
-            <h3>{{ equation }}</h3>
+            <h3 :key="`function-${plot.optimizationProblem.id}`">
+                {{ equation }}
+            </h3>
 
             <p class="modal-card-section-title">Modify parameters</p>
             <div class="form-horizontal">
                 <div class="control-wrapper">
                     <label id="a" class="input-label math"> a </label>
                     <input
-                        ref="firstInput"
+                        ref="focusInput"
                         class="control transition-ease"
                         type="number"
                         name="a"
@@ -68,6 +70,7 @@ import { quadratic } from "@/optimization/optimization-problems.js";
 import ModalFormMixin from "@/mixins/modal-form-mixin.js";
 
 export default {
+    name: "QuadraticModal",
     components: {
         ModalDialog,
         DomainPicker,
@@ -104,7 +107,7 @@ export default {
     methods: {
         focusInput() {
             setTimeout(() => {
-                this.$refs.firstInput.focus();
+                this.$refs.focusInput.focus();
             }, 50);
         },
         updatePlot() {
@@ -125,6 +128,6 @@ export default {
 
 <style scoped>
 .control-wrapper {
-    width: 30%;
+    width: 38%;
 }
 </style>

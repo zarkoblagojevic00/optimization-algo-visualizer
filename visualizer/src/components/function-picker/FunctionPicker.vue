@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-    <div class="function-picker-container">
+    <div class="function-picker-wrapper">
         <surface-plot
             v-if="modelValue.xRange"
             :xRange="modelValue.xRange"
@@ -11,8 +11,8 @@
         <div class="submenu">
             <div class="submenu-title">Functions</div>
             <div
-                v-for="problem in problems"
-                :key="problem.plot.optimizationProblem.id"
+                v-for="problem in displayedProblems"
+                :key="`function-${problem.plot.optimizationProblem.id}`"
                 class="function-menu-item underline-container transition-ease-in"
                 :class="{
                     'function-menu-item-active':
@@ -45,16 +45,48 @@
                             @click="problem.modal.active = true"
                         ></button>
                     </div>
-                    <!-- Modal -->
-                    <component
-                        :key="problem.plot.optimizationProblem.id"
-                        :is="problem.modal.component"
-                        v-model:plot="problem.plot"
-                        v-model:active="problem.modal.active"
-                    ></component>
                 </div>
             </div>
+            <!-- Modals -->
+            <component
+                v-for="problem in problems"
+                :key="`modal-${problem.plot.optimizationProblem.id}`"
+                :is="problem.modal.component"
+                v-model:plot="problem.plot"
+                v-model:active="problem.modal.active"
+            ></component>
         </div>
+        <div
+            v-if="this.problems.length > pageSize"
+            class="pagination-container"
+        >
+            <button
+                class="pagination-button clickable fill primary transition-ease-in"
+                :class="{ disabled: isLastPageToLeft }"
+                @click="--activePage"
+                :disabled="isLastPageToLeft"
+            >
+                &lt;
+            </button>
+            <div class="page-counter">
+                <!-- +1 because first activePage is 0 -->
+                {{ activePage + 1 }} / {{ numberOfPages + 1 }}
+            </div>
+            <button
+                class="pagination-button clickable fill primary transition-ease-in"
+                :class="{ disabled: isLastPageToRight }"
+                @click="++activePage"
+                :disabled="isLastPageToRight"
+            >
+                &gt;
+            </button>
+        </div>
+        <button
+            class="add-function clickable fill primary transition-ease-in"
+            @click="addCustomFunction"
+        >
+            Add function
+        </button>
     </div>
 </template>
 
@@ -67,7 +99,10 @@ import {
 
 import QuadraticModal from "@/components/function-picker/modals/QuadraticModal.vue";
 import Quadratic2GaussiansModal from "@/components/function-picker/modals/Quadratic2GaussiansModal.vue";
+import CustomFunctionModal from "@/components/function-picker/modals/CustomFunctionModal.vue";
 import { shallowRef } from "vue";
+import { deepCopy } from "@/utils/deep-copy.js";
+
 const modals = [
     shallowRef(QuadraticModal),
     shallowRef(Quadratic2GaussiansModal),
@@ -99,9 +134,12 @@ export default {
     emits: ["update:modelValue"],
     components: {
         SurfacePlot,
+        CustomFunctionModal,
     },
     data() {
         return {
+            activePage: 0,
+            pageSize: 4,
             activeId: "",
             problems: functions.map((prob, idx) => ({
                 plot: {
@@ -121,6 +159,21 @@ export default {
     },
     created() {
         this.activeId = this.problems[0].plot.optimizationProblem.id;
+    },
+    computed: {
+        displayedProblems() {
+            const offset = this.activePage * this.pageSize;
+            return this.problems.slice(offset, offset + this.pageSize);
+        },
+        numberOfPages() {
+            return Math.ceil(this.problems.length / this.pageSize) - 1;
+        },
+        isLastPageToLeft() {
+            return this.activePage === 0;
+        },
+        isLastPageToRight() {
+            return this.activePage === this.numberOfPages;
+        },
     },
 
     watch: {
@@ -142,11 +195,52 @@ export default {
             deep: true,
         },
     },
+
+    methods: {
+        addCustomFunction() {
+            this.problems.push({
+                plot: {
+                    xRange: [-2, 2],
+                    yRange: [-2, 2],
+                    // zRange will be calculated by FunctionPicker/SurfacePlot
+                    // zRange is needed for rendering contour plot correctly
+                    zRange: [],
+                    optimizationProblem: {
+                        id: `custom-function-${Math.random()}`,
+                        title: "Draft",
+                        f: null,
+                        gradF: null,
+                    },
+                },
+                modal: {
+                    active: true,
+                    component: shallowRef(CustomFunctionModal),
+                },
+            });
+        },
+        resetModal() {
+            this.problems.push(deepCopy(this.newCustomFunction));
+            this.newCustomFunction = {
+                plot: {
+                    xRange: [-2, 2],
+                    yRange: [-2, 2],
+                    // zRange will be calculated by FunctionPicker/SurfacePlot
+                    // zRange is needed for rendering contour plot correctly
+                    zRange: [],
+                    optimizationProblem: null,
+                },
+                modal: {
+                    active: false,
+                    component: shallowRef(CustomFunctionModal),
+                },
+            };
+        },
+    },
 };
 </script>
 
 <style scoped>
-.function-picker-container {
+.function-picker-wrapper {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -155,9 +249,16 @@ export default {
     border-left: 3px solid var(--background-lighter);
 }
 
+.submenu {
+    margin-bottom: 5px;
+    max-height: 32%;
+    min-height: 32%;
+}
+
 .submenu-title {
     color: #0a2249;
-    border-bottom-color: #a6c3e4;
+    border-bottom: 2px solid #a6c3e4;
+    background-color: #c5dbf5;
 }
 
 .function-menu-item {
@@ -199,7 +300,7 @@ export default {
     left: 3%;
     height: 60%;
     width: 60%;
-    border: 0.34em solid var(--light-blue-dimmer);
+    border: 0.34em solid var(--primary);
     border-radius: 50%;
     background-color: #c5dbf5;
     transition: all 0.25s;
@@ -210,6 +311,11 @@ export default {
     .function-radio:not(:checked)::after {
         border-width: 0.3em;
         top: 3.2%;
+    }
+
+    .submenu {
+        max-height: 41.25%;
+        min-height: 41.25%;
     }
 }
 
@@ -243,30 +349,55 @@ export default {
 }
 
 .function-menu-item.underline-container {
-    background-image: -webkit-linear-gradient(
-            var(--light-blue-dimmer),
-            var(--light-blue-dimmer)
-        ),
+    background-image: -webkit-linear-gradient(var(--primary), var(--primary)),
         -webkit-linear-gradient(transparent, transparent);
-    background-image: -moz-linear-gradient(
-            var(--light-blue-dimmer),
-            var(--light-blue-dimmer)
-        ),
+    background-image: -moz-linear-gradient(var(--primary), var(--primary)),
         -moz-linear-gradient(transparent, transparent);
-    background-image: -ms-linear-gradient(
-            var(--light-blue-dimmer),
-            var(--light-blue-dimmer)
-        ),
+    background-image: -ms-linear-gradient(var(--primary), var(--primary)),
         -ms-linear-gradient(transparent, transparent);
-    background-image: -o-linear-gradient(
-            var(--light-blue-dimmer),
-            var(--light-blue-dimmer)
-        ),
+    background-image: -o-linear-gradient(var(--primary), var(--primary)),
         -o-linear-gradient(transparent, transparent);
-    background-image: linear-gradient(
-            var(--light-blue-dimmer),
-            var(--light-blue-dimmer)
-        ),
+    background-image: linear-gradient(var(--primary), var(--primary)),
         linear-gradient(transparent, transparent);
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 110px;
+}
+
+.pagination-button:first-child {
+    padding-top: 0.05rem;
+    padding-right: 0.2rem;
+}
+
+.pagination-button:last-child {
+    padding-top: 0.05rem;
+    padding-left: 0.2rem;
+}
+
+.pagination-button {
+    border-radius: 50%;
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    font-size: 1.25rem;
+}
+
+.pagination-button.disabled {
+    --fill-color: var(--default);
+    --fill-color-active: var(--default);
+    cursor: default;
+}
+
+.page-counter {
+    font-size: 0.95rem;
+    font-weight: bold;
+}
+
+.add-function {
+    margin-top: 12px;
 }
 </style>

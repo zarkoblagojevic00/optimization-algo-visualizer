@@ -90,12 +90,20 @@ export default {
             }
         },
         saveChanges() {
-            this.onSuccess();
-            this.closeModal();
+            try {
+                this.onSuccess();
+                this.closeModal();
+            } catch (e) {
+                console.log(e.message);
+            }
         },
         cancel() {
-            this.onCancel();
-            this.closeModal();
+            try {
+                this.onCancel();
+                this.closeModal();
+            } catch (e) {
+                console.log(e.message);
+            }
         },
     },
 };
@@ -161,6 +169,7 @@ export default {
 
 .modal-card-head,
 .modal-card-foot {
+    min-height: 25px;
     align-items: center;
     background-color: whitesmoke;
     display: flex;

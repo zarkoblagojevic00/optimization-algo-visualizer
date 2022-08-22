@@ -8,7 +8,16 @@
             :onSuccess="updatePlot"
             :onCancel="resetForm"
         >
-            <h3>
+            <div>
+                Inspired by
+                <a
+                    href="https://emiliendupont.github.io/2018/01/24/optimization-visualization/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >this amazing blogpost.</a
+                >
+            </div>
+            <h3 :key="`function-${plot.optimizationProblem.id}`">
                 {{ equation }}
             </h3>
 
@@ -51,7 +60,7 @@
                     <div class="control-wrapper">
                         <label id="a" class="input-label math"> a </label>
                         <input
-                            ref="firstInput"
+                            ref="focusInput"
                             class="control transition-ease"
                             type="number"
                             name="a"
@@ -99,7 +108,7 @@
 
                 <div class="form">
                     <label for="Gaussian" class="input-label"
-                        >Gaussian curve 225</label
+                        >Gaussian curve 2</label
                     >
                     <div class="control-wrapper">
                         <label id="b" class="input-label math"> b </label>
@@ -153,7 +162,7 @@
             <p class="modal-card-section-title">Modify domain</p>
             <div class="form-horizontal">
                 <div class="control-wrapper">
-                    <label id="x-domain" class="input-label"> x domain </label>
+                    <label id="x-domain" class="input-label"> X domain </label>
                     <domain-picker v-model="form.xRange"></domain-picker>
                 </div>
                 <div class="control-wrapper">
@@ -172,6 +181,7 @@ import { quadratic2mins } from "@/optimization/optimization-problems.js";
 import ModalFormMixin from "@/mixins/modal-form-mixin.js";
 
 export default {
+    name: "Quadratic2GaussiansModal",
     components: {
         ModalDialog,
         DomainPicker,
@@ -219,7 +229,7 @@ export default {
     methods: {
         focusInput() {
             setTimeout(() => {
-                this.$refs.firstInput.focus();
+                this.$refs.focusInput.focus();
             }, 50);
         },
         updatePlot() {
@@ -239,7 +249,7 @@ export default {
 
 <style scoped>
 .form-horizontal .control-wrapper {
-    width: 30%;
+    width: 38%;
 }
 
 .coordinates-container {

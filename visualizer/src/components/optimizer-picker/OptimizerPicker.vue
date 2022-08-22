@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar-container">
+    <div class="optimizer-picker-wrapper">
         <div class="promo-container">
             <img
                 class="promo-logo"
@@ -117,7 +117,7 @@ export default {
 </script>
 
 <style scoped>
-.sidebar-container {
+.optimizer-picker-wrapper {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -151,6 +151,10 @@ export default {
     position: relative;
     top: -5px;
     left: 3px;
+}
+
+.submenu-title {
+    border-bottom: 2px solid var(--background-lighter);
 }
 
 .optimizer-menu-item {
@@ -201,7 +205,7 @@ export default {
     left: 0;
     height: 82%;
     width: 80%;
-    border: 2px solid var(--light-blue-dimmer);
+    border: 2px solid var(--primary);
     border-radius: 0.2em;
     background-color: var(--background);
     transition: all 0.25s;

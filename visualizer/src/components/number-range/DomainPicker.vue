@@ -43,7 +43,7 @@ export default {
 
 .domain-picker-container input[type="number"].control {
     display: inline;
-    width: 58px;
+    width: 80px;
     /* margin-bottom: 10px; */
 }
 </style>

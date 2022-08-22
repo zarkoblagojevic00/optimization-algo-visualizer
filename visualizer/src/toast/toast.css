@@ -1,0 +1,60 @@
+/* Should be imported in App.vue */
+
+#toast {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+
+    min-width: 350px; 
+    max-width: 350px; 
+    min-height: 50px;
+    border-radius: 0.4rem;
+
+    overflow-wrap: break-word;
+    /* text-align: justify; */
+    padding: 0.5em 0.75em; 
+    position: fixed;  
+    z-index: 999;  
+    right: -360px; 
+    bottom: 2rem;
+    transition: all 0.8s;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 1.15rem;
+  }
+  
+  /* Show the toast when clicking on a button (class added with JavaScript) */
+  #toast.show {
+    visibility: visible; /* Show the toast */
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(calc(-360px - 2rem));
+  }
+
+  .toast-default {
+    border: 4px solid #716c6c;
+    background-color: #fff;
+    color: #716c6c;
+  }
+
+  .toast-danger{
+    border: 4px solid #ff6868;
+    background-color: #c43434; 
+    color: #fff;
+  }
+
+  .toast-success {
+    border: 4px solid #7ef55a;
+    background-color: #43c540; 
+    color: #fff;
+  }
+
+  .toast-warning {
+    border: 4px solid #fee57e;
+    background-color: #cba407; 
+    color: #fff;
+  }
