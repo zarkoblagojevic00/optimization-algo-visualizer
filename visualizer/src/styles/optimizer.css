@@ -5,6 +5,7 @@
     --nesterov: lightblue;
     --adagrad: lightgreen;
     --rmsprop: #f3f341;
+    --adadelta: #f56ef5;
 }
 
 .axis {
@@ -55,4 +56,8 @@
 
 .rmsprop-circle {
     fill: var(--rmsprop);
+}
+
+.adadelta-circle {
+    fill: var(--adadelta);
 }

@@ -128,4 +128,42 @@ const rmsprop = (alpha, omega, iterations) => ({
     factory: rmsProp(alpha, omega, iterations),
 });
 
-export { sgd, momentum, nesterov, adagrad, rmsprop };
+const adaptiveDelta = (omega, iterations) => (gradF) => {
+    return function* (x0) {
+        let nextPoint = x0;
+        const epsilon1 = 1e-8; // for regularization
+        let v = [1, 1];
+        let G = [0, 0];
+        let T = [0, 0];
+        let x, y, gradX, gradY;
+        for (let i = 0; i < iterations; i++) {
+            yield nextPoint;
+            [x, y] = nextPoint;
+            [gradX, gradY] = gradF(x, y);
+            G = [
+                omega * G[0] + (1 - omega) * gradX ** 2,
+                omega * G[1] + (1 - omega) * gradY ** 2,
+            ];
+            T = [
+                omega * T[0] + (1 - omega) * v[0] ** 2,
+                omega * T[1] + (1 - omega) * v[1] ** 2,
+            ];
+            v = [
+                (Math.sqrt(T[0] + epsilon1) * gradX) /
+                    Math.sqrt(G[0] + epsilon1),
+                (Math.sqrt(T[1] + epsilon1) * gradY) /
+                    Math.sqrt(G[1] + epsilon1),
+            ];
+            nextPoint = [x - v[0], y - v[1]];
+            console.log(nextPoint);
+        }
+    };
+};
+
+const adadelta = (omega, iterations) => ({
+    id: "adadelta",
+    title: "ADADELTA",
+    factory: adaptiveDelta(omega, iterations),
+});
+
+export { sgd, momentum, nesterov, adagrad, rmsprop, adadelta };
