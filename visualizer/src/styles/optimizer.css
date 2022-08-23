@@ -1,3 +1,10 @@
+:root {
+    /* optimizers */
+    --sgd: orange;
+    --momentum: indianred;
+    --nesterov: lightblue;
+}
+
 .axis {
     font-size: 0.95rem;
     font-weight: 560;
@@ -34,4 +41,8 @@
 
 .momentum-circle {
     fill: var(--momentum);
+}
+
+.nesterov-circle {
+    fill: var(--nesterov);
 }

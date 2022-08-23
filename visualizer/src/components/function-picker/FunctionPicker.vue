@@ -15,8 +15,7 @@
                 :key="`function-${problem.plot.optimizationProblem.id}`"
                 class="function-menu-item underline-container transition-ease-in"
                 :class="{
-                    'function-menu-item-active':
-                        activeId === problem.plot.optimizationProblem.id,
+                    active: activeId === problem.plot.optimizationProblem.id,
                 }"
             >
                 <div class="function-title">
@@ -270,9 +269,12 @@ export default {
     border-bottom: 2px solid #a6c3e4;
 }
 
-.function-menu-item-active {
-    background-color: #aacdf3;
-    background-size: 100% 3px, auto;
+.underline-container {
+    --underline-color: var(primary);
+}
+
+.underline-container.active {
+    --underline-active-bg-color: #aacdf3;
 }
 
 .function-activate-more {
@@ -346,19 +348,6 @@ export default {
     border-color: #75b8ff;
     background-color: #c2dfff;
     background-image: url("@/assets/more-filled-icon.png");
-}
-
-.function-menu-item.underline-container {
-    background-image: -webkit-linear-gradient(var(--primary), var(--primary)),
-        -webkit-linear-gradient(transparent, transparent);
-    background-image: -moz-linear-gradient(var(--primary), var(--primary)),
-        -moz-linear-gradient(transparent, transparent);
-    background-image: -ms-linear-gradient(var(--primary), var(--primary)),
-        -ms-linear-gradient(transparent, transparent);
-    background-image: -o-linear-gradient(var(--primary), var(--primary)),
-        -o-linear-gradient(transparent, transparent);
-    background-image: linear-gradient(var(--primary), var(--primary)),
-        linear-gradient(transparent, transparent);
 }
 
 .pagination-container {

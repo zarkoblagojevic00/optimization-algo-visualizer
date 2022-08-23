@@ -17,10 +17,6 @@
 
     --light-blue: #7fcff7;
     --light-red: #ff2121;
-
-    /* optimizers */
-    --sgd: orange;
-    --momentum: indianred;
 }
 
 .transition-ease-in {
@@ -32,9 +28,28 @@
 }
 
 .underline-container {
+    --underline-color: var(--primary);
+    
     background-size: 0 2px, auto;
     background-repeat: no-repeat;
     background-position: center bottom;
+    
+    background-image: -webkit-linear-gradient(var(--underline-color), var(--underline-color)),
+        -webkit-linear-gradient(transparent, transparent);
+    background-image: -moz-linear-gradient(var(--underline-color), var(--underline-color)),
+        -moz-linear-gradient(transparent, transparent);
+    background-image: -ms-linear-gradient(var(--underline-color), var(--underline-color)),
+        -ms-linear-gradient(transparent, transparent);
+    background-image: -o-linear-gradient(var(--underline-color), var(--underline-color)),
+        -o-linear-gradient(transparent, transparent);
+    background-image: linear-gradient(var(--underline-color), var(--underline-color)),
+        linear-gradient(transparent, transparent);
+}
+
+.underline-container.active {
+    --underline-active-bg-color: transparent;
+    background-color: var(--underline-active-bg-color);
+    background-size: 100% 3px, auto;
 }
 
 .form-horizontal {

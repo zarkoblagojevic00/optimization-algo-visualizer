@@ -1,7 +1,8 @@
-// all functions first receive arguments other than starting point x0
-// they return a generator function that receives x0 as only argument
-// this is done because initial arguments are set in a different
-// part of the app than x0 argument is
+// all optimizers first receive hiperparams
+// then they recieve gradF and return a generator function
+// generator function receives only x0
+// this is done because hiperparams, gradF and x0 are changed in different parts
+// part of the app and at different frequencies
 
 // iterative step:
 // xNew = x - alpha * gradient(x)
@@ -18,6 +19,12 @@ const baseSGD = (alpha, iterations) => (gradF) => {
     };
 };
 
+const sgd = (alpha, iterations) => ({
+    id: "sgd",
+    title: "Steepest Gradient Descent",
+    factory: baseSGD(alpha, iterations),
+});
+
 const momentumSGD = (alpha, omega, iterations) => (gradF) => {
     return function* (x0) {
         let nextPoint = x0;
@@ -33,14 +40,35 @@ const momentumSGD = (alpha, omega, iterations) => (gradF) => {
     };
 };
 
-export const sgd = (alpha, iterations) => ({
-    id: "sgd",
-    title: "Steepest Gradient Descent",
-    factory: baseSGD(alpha, iterations),
-});
-
-export const momentum = (alpha, omega, iterations) => ({
+const momentum = (alpha, omega, iterations) => ({
     id: "momentum",
     title: "Gradient Descent with Momentum",
     factory: momentumSGD(alpha, omega, iterations),
 });
+
+const nesterovSGD = (alpha, omega, iterations) => (gradF) => {
+    return function* (x0) {
+        let nextPoint = x0;
+        let v = [0, 0];
+        let x, y, gradPredictedX, gradPredictedY, predictedNextPoint;
+        for (let i = 0; i < iterations; i++) {
+            yield nextPoint;
+            [x, y] = nextPoint;
+            predictedNextPoint = [x - omega * v[0], y - omega * v[1]];
+            [gradPredictedX, gradPredictedY] = gradF(...predictedNextPoint);
+            v = [
+                omega * v[0] + alpha * gradPredictedX,
+                omega * v[1] + alpha * gradPredictedY,
+            ];
+            nextPoint = [x - v[0], y - v[1]];
+        }
+    };
+};
+
+const nesterov = (alpha, omega, iterations) => ({
+    id: "nesterov",
+    title: "Nesterov Gradient Descent",
+    factory: nesterovSGD(alpha, omega, iterations),
+});
+
+export { sgd, momentum, nesterov };

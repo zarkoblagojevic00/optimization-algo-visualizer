@@ -17,10 +17,7 @@
                 v-for="(optimizer, idx) in activeOptimizers"
                 :key="idx"
                 class="optimizer-menu-item underline-container transition-ease-in"
-                :class="[
-                    optimizer.active ? 'optimizer-menu-item-active' : '',
-                    optimizer.value.id,
-                ]"
+                :class="[optimizer.active ? 'active' : '', optimizer.value.id]"
             >
                 <div class="optimizer-color-title">
                     <div
@@ -69,13 +66,22 @@
 </template>
 
 <script>
-import { sgd, momentum } from "@/optimization/optimizers.js";
+import { sgd, momentum, nesterov } from "@/optimization/optimizers.js";
 import SgdModal from "@/components/optimizer-picker/modals/SgdModal.vue";
 import MomentumModal from "@/components/optimizer-picker/modals/MomentumModal.vue";
+import NesterovModal from "@/components/optimizer-picker/modals/NesterovModal.vue";
 import { shallowRef } from "vue";
 
-const initOptimizers = [sgd(0.05, 100), momentum(0.05, 0.5, 100)];
-const modals = [shallowRef(SgdModal), shallowRef(MomentumModal)];
+const initOptimizers = [
+    sgd(0.05, 100),
+    momentum(0.05, 0.5, 100),
+    nesterov(0.05, 0.5, 100),
+];
+const modals = [
+    shallowRef(SgdModal),
+    shallowRef(MomentumModal),
+    shallowRef(NesterovModal),
+];
 
 export default {
     components: { SgdModal },
@@ -166,9 +172,32 @@ export default {
     border-bottom: 2px solid var(--background-lighter);
 }
 
-.optimizer-menu-item-active {
-    background-color: #213349;
-    background-size: 100% 3px, auto;
+.underline-container.active {
+    --underline-active-bg-color: #213349;
+}
+
+.sgd.underline-container.active {
+    --underline-color: var(--sgd);
+}
+
+.sgd-circle-color {
+    background: var(--sgd);
+}
+
+.momentum.underline-container.active {
+    --underline-color: var(--momentum);
+}
+
+.momentum-circle-color {
+    background: var(--momentum);
+}
+
+.nesterov.underline-container.active {
+    --underline-color: var(--nesterov);
+}
+
+.nesterov-circle-color {
+    background: var(--nesterov);
 }
 
 .optimizer-color-title {
@@ -238,39 +267,5 @@ export default {
     border-color: #385472;
     background-color: var(--background-lighter);
     background-image: url("@/assets/more-filled-icon.png");
-}
-
-.sgd.underline-container {
-    background-image: -webkit-linear-gradient(var(--sgd), var(--sgd)),
-        -webkit-linear-gradient(transparent, transparent);
-    background-image: -moz-linear-gradient(var(--sgd), var(--sgd)),
-        -moz-linear-gradient(transparent, transparent);
-    background-image: -ms-linear-gradient(var(--sgd), var(--sgd)),
-        -ms-linear-gradient(transparent, transparent);
-    background-image: -o-linear-gradient(var(--sgd), var(--sgd)),
-        -o-linear-gradient(transparent, transparent);
-    background-image: linear-gradient(var(--sgd), var(--sgd)),
-        linear-gradient(transparent, transparent);
-}
-
-.sgd-circle-color {
-    background: var(--sgd);
-}
-
-.momentum.underline-container {
-    background-image: -webkit-linear-gradient(var(--momentum), var(--momentum)),
-        -webkit-linear-gradient(transparent, transparent);
-    background-image: -moz-linear-gradient(var(--momentum), var(--momentum)),
-        -moz-linear-gradient(transparent, transparent);
-    background-image: -ms-linear-gradient(var(--momentum), var(--momentum)),
-        -ms-linear-gradient(transparent, transparent);
-    background-image: -o-linear-gradient(var(--momentum), var(--momentum)),
-        -o-linear-gradient(transparent, transparent);
-    background-image: linear-gradient(var(--momentum), var(--momentum)),
-        linear-gradient(transparent, transparent);
-}
-
-.momentum-circle-color {
-    background: var(--momentum);
 }
 </style>
