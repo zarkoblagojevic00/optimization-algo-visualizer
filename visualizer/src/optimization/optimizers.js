@@ -71,4 +71,31 @@ const nesterov = (alpha, omega, iterations) => ({
     factory: nesterovSGD(alpha, omega, iterations),
 });
 
-export { sgd, momentum, nesterov };
+const adaptiveGradient = (alpha, iterations) => (gradF) => {
+    return function* (x0) {
+        let nextPoint = x0;
+        const epsilon1 = 1e-8; // for regularization
+        let v = [0, 0];
+        let G = [0, 0];
+        let x, y, gradX, gradY;
+        for (let i = 0; i < iterations; i++) {
+            yield nextPoint;
+            [x, y] = nextPoint;
+            [gradX, gradY] = gradF(x, y);
+            G = [G[0] + gradX ** 2, G[1] + gradY ** 2];
+            v = [
+                (alpha * gradX) / Math.sqrt(G[0] + epsilon1),
+                (alpha * gradY) / Math.sqrt(G[1] + epsilon1),
+            ];
+            nextPoint = [x - v[0], y - v[1]];
+        }
+    };
+};
+
+const adagrad = (alpha, iterations) => ({
+    id: "adagrad",
+    title: "ADAGRAD (adaptive gradient)",
+    factory: adaptiveGradient(alpha, iterations),
+});
+
+export { sgd, momentum, nesterov, adagrad };

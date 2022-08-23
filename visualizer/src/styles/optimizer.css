@@ -3,6 +3,7 @@
     --sgd: orange;
     --momentum: indianred;
     --nesterov: lightblue;
+    --adagrad: lightgreen;
 }
 
 .axis {
@@ -45,4 +46,8 @@
 
 .nesterov-circle {
     fill: var(--nesterov);
+}
+
+.adagrad-circle {
+    fill: var(--adagrad);
 }
