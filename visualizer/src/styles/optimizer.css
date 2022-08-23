@@ -4,6 +4,7 @@
     --momentum: indianred;
     --nesterov: lightblue;
     --adagrad: lightgreen;
+    --rmsprop: #f3f341;
 }
 
 .axis {
@@ -50,4 +51,8 @@
 
 .adagrad-circle {
     fill: var(--adagrad);
+}
+
+.rmsprop-circle {
+    fill: var(--rmsprop);
 }

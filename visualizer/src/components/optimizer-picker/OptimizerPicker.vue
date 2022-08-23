@@ -66,11 +66,18 @@
 </template>
 
 <script>
-import { sgd, momentum, nesterov, adagrad } from "@/optimization/optimizers.js";
+import {
+    sgd,
+    momentum,
+    nesterov,
+    adagrad,
+    rmsprop,
+} from "@/optimization/optimizers.js";
 import SgdModal from "@/components/optimizer-picker/modals/SgdModal.vue";
 import MomentumModal from "@/components/optimizer-picker/modals/MomentumModal.vue";
 import NesterovModal from "@/components/optimizer-picker/modals/NesterovModal.vue";
 import AdagradModal from "@/components/optimizer-picker/modals/AdagradModal.vue";
+import RmspropModal from "@/components/optimizer-picker/modals/RmspropModal.vue";
 import { shallowRef } from "vue";
 
 const initOptimizers = [
@@ -78,6 +85,7 @@ const initOptimizers = [
     momentum(0.05, 0.5, 100),
     nesterov(0.05, 0.5, 100),
     adagrad(0.8, 100),
+    rmsprop(0.1, 0.9, 100),
 ];
 
 const modals = [
@@ -85,6 +93,7 @@ const modals = [
     shallowRef(MomentumModal),
     shallowRef(NesterovModal),
     shallowRef(AdagradModal),
+    shallowRef(RmspropModal),
 ];
 
 export default {
@@ -210,6 +219,14 @@ export default {
 
 .adagrad-circle-color {
     background: var(--adagrad);
+}
+
+.rmsprop.underline-container.active {
+    --underline-color: var(--rmsprop);
+}
+
+.rmsprop-circle-color {
+    background: var(--rmsprop);
 }
 
 .optimizer-color-title {

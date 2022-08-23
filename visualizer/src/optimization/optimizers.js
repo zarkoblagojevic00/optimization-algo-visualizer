@@ -98,4 +98,34 @@ const adagrad = (alpha, iterations) => ({
     factory: adaptiveGradient(alpha, iterations),
 });
 
-export { sgd, momentum, nesterov, adagrad };
+const rmsProp = (alpha, omega, iterations) => (gradF) => {
+    return function* (x0) {
+        let nextPoint = x0;
+        const epsilon1 = 1e-8; // for regularization
+        let v = [0, 0];
+        let G = [0, 0];
+        let x, y, gradX, gradY;
+        for (let i = 0; i < iterations; i++) {
+            yield nextPoint;
+            [x, y] = nextPoint;
+            [gradX, gradY] = gradF(x, y);
+            G = [
+                omega * G[0] + (1 - omega) * gradX ** 2,
+                omega * G[1] + (1 - omega) * gradY ** 2,
+            ];
+            v = [
+                (alpha * gradX) / Math.sqrt(G[0] + epsilon1),
+                (alpha * gradY) / Math.sqrt(G[1] + epsilon1),
+            ];
+            nextPoint = [x - v[0], y - v[1]];
+        }
+    };
+};
+
+const rmsprop = (alpha, omega, iterations) => ({
+    id: "rmsprop",
+    title: "RMSProp",
+    factory: rmsProp(alpha, omega, iterations),
+});
+
+export { sgd, momentum, nesterov, adagrad, rmsprop };
