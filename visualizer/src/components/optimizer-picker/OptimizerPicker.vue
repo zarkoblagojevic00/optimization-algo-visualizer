@@ -73,6 +73,7 @@ import {
     adagrad,
     rmsprop,
     adadelta,
+    adam,
 } from "@/optimization/optimizers.js";
 import SgdModal from "@/components/optimizer-picker/modals/SgdModal.vue";
 import MomentumModal from "@/components/optimizer-picker/modals/MomentumModal.vue";
@@ -80,6 +81,7 @@ import NesterovModal from "@/components/optimizer-picker/modals/NesterovModal.vu
 import AdagradModal from "@/components/optimizer-picker/modals/AdagradModal.vue";
 import RmspropModal from "@/components/optimizer-picker/modals/RmspropModal.vue";
 import AdadeltaModal from "@/components/optimizer-picker/modals/AdadeltaModal.vue";
+import AdamModal from "@/components/optimizer-picker/modals/AdamModal.vue";
 import { shallowRef } from "vue";
 
 const initOptimizers = [
@@ -89,6 +91,7 @@ const initOptimizers = [
     adagrad(0.8, 100),
     rmsprop(0.1, 0.9, 100),
     adadelta(0.9, 100),
+    adam(0.091, 0.9, 0.99, 100),
 ];
 
 const modals = [
@@ -98,6 +101,7 @@ const modals = [
     shallowRef(AdagradModal),
     shallowRef(RmspropModal),
     shallowRef(AdadeltaModal),
+    shallowRef(AdamModal),
 ];
 
 export default {
@@ -191,54 +195,6 @@ export default {
 
 .underline-container.active {
     --underline-active-bg-color: #213349;
-}
-
-.sgd.underline-container.active {
-    --underline-color: var(--sgd);
-}
-
-.sgd-circle-color {
-    background: var(--sgd);
-}
-
-.momentum.underline-container.active {
-    --underline-color: var(--momentum);
-}
-
-.momentum-circle-color {
-    background: var(--momentum);
-}
-
-.nesterov.underline-container.active {
-    --underline-color: var(--nesterov);
-}
-
-.nesterov-circle-color {
-    background: var(--nesterov);
-}
-
-.adagrad.underline-container.active {
-    --underline-color: var(--adagrad);
-}
-
-.adagrad-circle-color {
-    background: var(--adagrad);
-}
-
-.rmsprop.underline-container.active {
-    --underline-color: var(--rmsprop);
-}
-
-.rmsprop-circle-color {
-    background: var(--rmsprop);
-}
-
-.adadelta.underline-container.active {
-    --underline-color: var(--adadelta);
-}
-
-.adadelta-circle-color {
-    background: var(--adadelta);
 }
 
 .optimizer-color-title {

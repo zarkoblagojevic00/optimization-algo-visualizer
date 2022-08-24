@@ -10,7 +10,7 @@
         >
             <div class="control-wrapper">
                 <label id="omega" class="input-label">
-                    <b>&omega;</b> - omega, learning rate
+                    <b>&omega;</b> - omega
                 </label>
                 <input
                     ref="firstInput"

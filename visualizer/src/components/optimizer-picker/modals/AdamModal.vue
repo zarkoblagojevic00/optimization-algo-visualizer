@@ -22,17 +22,29 @@
                 />
             </div>
             <div class="control-wrapper">
-                <label id="omega" class="input-label">
-                    <b>&omega;</b>
-                    - omega
+                <label id="omega1" class="input-label">
+                    <b>&omega;<sub>1</sub></b>
+                    - omega1
                 </label>
                 <input
-                    ref="omega"
                     class="control transition-ease"
                     type="number"
-                    name="omega"
-                    id="omega"
-                    v-model="form.omega"
+                    name="omega1"
+                    id="omega1"
+                    v-model="form.omega1"
+                />
+            </div>
+            <div class="control-wrapper">
+                <label id="omega2" class="input-label">
+                    <b>&omega;<sub>2</sub></b>
+                    - omega2
+                </label>
+                <input
+                    class="control transition-ease"
+                    type="number"
+                    name="omega2"
+                    id="omega2"
+                    v-model="form.omega2"
                 />
             </div>
             <div class="control-wrapper">
@@ -53,7 +65,7 @@
 import ModalDialog from "@/components/modals/ModalDialog.vue";
 import NumInputRange from "@/components/number-range/NumInputRange.vue";
 
-import { rmsprop } from "@/optimization/optimizers.js";
+import { adam } from "@/optimization/optimizers.js";
 import ModalFormMixin from "@/mixins/modal-form-mixin.js";
 
 export default {
@@ -76,9 +88,10 @@ export default {
     data() {
         return {
             form: {
-                alpha: 0.1,
+                alpha: 0.091,
                 iterations: 100,
-                omega: 0.9,
+                omega1: 0.9,
+                omega2: 0.99,
             },
         };
     },
@@ -97,9 +110,10 @@ export default {
             this.updateForm();
             this.$emit(
                 "update:optimizer",
-                rmsprop(
+                adam(
                     this.savedForm.alpha,
-                    this.savedForm.omega,
+                    this.savedForm.omega1,
+                    this.savedForm.omega2,
                     this.savedForm.iterations
                 )
             );

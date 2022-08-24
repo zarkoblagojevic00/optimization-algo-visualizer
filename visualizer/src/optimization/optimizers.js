@@ -94,7 +94,7 @@ const adaptiveGradient = (alpha, iterations) => (gradF) => {
 
 const adagrad = (alpha, iterations) => ({
     id: "adagrad",
-    title: "ADAGRAD (adaptive gradient)",
+    title: "ADAGRAD - Adaptive gradient",
     factory: adaptiveGradient(alpha, iterations),
 });
 
@@ -155,7 +155,6 @@ const adaptiveDelta = (omega, iterations) => (gradF) => {
                     Math.sqrt(G[1] + epsilon1),
             ];
             nextPoint = [x - v[0], y - v[1]];
-            console.log(nextPoint);
         }
     };
 };
@@ -166,4 +165,45 @@ const adadelta = (omega, iterations) => ({
     factory: adaptiveDelta(omega, iterations),
 });
 
-export { sgd, momentum, nesterov, adagrad, rmsprop, adadelta };
+const Adam = (alpha, omega1, omega2, iterations) => (gradF) => {
+    return function* (x0) {
+        let nextPoint = x0;
+        const epsilon1 = 1e-8; // for regularization
+        let v = [1, 1],
+            vHat;
+        let m = [1, 1],
+            mHat;
+        let x, y, gradX, gradY;
+        for (let i = 0; i < iterations; i++) {
+            yield nextPoint;
+            [x, y] = nextPoint;
+            [gradX, gradY] = gradF(x, y);
+            m = [
+                omega1 * m[0] + (1 - omega1) * gradX,
+                omega1 * m[1] + (1 - omega1) * gradY,
+            ];
+            v = [
+                omega2 * v[0] + (1 - omega2) * gradX ** 2,
+                omega2 * v[1] + (1 - omega2) * gradY ** 2,
+            ];
+            mHat = [m[0] / (1 - omega1), m[1] / (1 - omega1)];
+            vHat = [
+                Math.abs(v[0]) / (1 - omega2),
+                Math.abs(v[1]) / (1 - omega2),
+            ];
+            nextPoint = [
+                x - (alpha * mHat[0]) / Math.sqrt(vHat[0] + epsilon1),
+                y - (alpha * mHat[1]) / Math.sqrt(vHat[1] + epsilon1),
+            ];
+            console.log(nextPoint);
+        }
+    };
+};
+
+const adam = (alpha, omega1, omega2, iterations) => ({
+    id: "adam",
+    title: "Adam - Adaptive momentum estimation",
+    factory: Adam(alpha, omega1, omega2, iterations),
+});
+
+export { sgd, momentum, nesterov, adagrad, rmsprop, adadelta, adam };

@@ -6,6 +6,7 @@
     --adagrad: lightgreen;
     --rmsprop: #f3f341;
     --adadelta: #f56ef5;
+    --adam: #3262ff;
 }
 
 .axis {
@@ -23,7 +24,12 @@
     }
 }
 
-/* optimization path and circles */
+/* 
+optimization path, 
+circles 
+and underline in components/optimizer-picker/OptimizerPicker.vue
+*/
+
 .optimization-path {
     stroke-width: 4;
     fill: none;
@@ -37,27 +43,86 @@
     stroke: #000;
 }
 
-/* must have the same prefix as optimizer id: see optimizers.js */
 .sgd-circle {
     fill: var(--sgd);
+}
+
+.sgd.underline-container.active {
+    --underline-color: var(--sgd);
+}
+
+.sgd-circle-color {
+    background: var(--sgd);
 }
 
 .momentum-circle {
     fill: var(--momentum);
 }
 
+.momentum.underline-container.active {
+    --underline-color: var(--momentum);
+}
+
+.momentum-circle-color {
+    background: var(--momentum);
+}
+
 .nesterov-circle {
     fill: var(--nesterov);
+}
+
+.nesterov.underline-container.active {
+    --underline-color: var(--nesterov);
+}
+
+.nesterov-circle-color {
+    background: var(--nesterov);
 }
 
 .adagrad-circle {
     fill: var(--adagrad);
 }
 
+.adagrad.underline-container.active {
+    --underline-color: var(--adagrad);
+}
+
+.adagrad-circle-color {
+    background: var(--adagrad);
+}
+
+.rmsprop.underline-container.active {
+    --underline-color: var(--rmsprop);
+}
+
+.rmsprop-circle-color {
+    background: var(--rmsprop);
+}
+
 .rmsprop-circle {
     fill: var(--rmsprop);
 }
 
+.adadelta.underline-container.active {
+    --underline-color: var(--adadelta);
+}
+
+.adadelta-circle-color {
+    background: var(--adadelta);
+}
+
 .adadelta-circle {
     fill: var(--adadelta);
+}
+
+.adam.underline-container.active {
+    --underline-color: var(--adam);
+}
+
+.adam-circle-color {
+    background: var(--adam);
+}
+
+.adam-circle {
+    fill: var(--adam);
 }
