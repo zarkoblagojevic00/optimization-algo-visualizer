@@ -195,10 +195,10 @@ const optimize = (x0, optimizers) =>
         return prev;
     }, {});
 
-// optimizerPath is a generator that returns path in scope of domain (cartesian coordinates)
+// cartesianPath is a generator that returns path in scope of domain (cartesian coordinates)
 // to render path properly cartesian coordianates must by transformed to pixel coordinates
-function* cartesianToPixselPathTransformer(optimizerPath) {
-    for (const point of optimizerPath) {
+function* cartesianToPixselPathTransformer(cartesianPath) {
+    for (const point of cartesianPath) {
         yield [xScale(point[0]), yScale(point[1])];
     }
 }
@@ -224,18 +224,18 @@ const lineGenerator = line().x(getX).y(getY).curve(curveCardinal);
 function drawSinglePath([id, path], gradientPathGroup) {
     // const pathLength = 100;
     // gradientPathGroup
-    // .selectAll()
-    // .data(path)
-    // .join("path")
-    // .attr("d", lineGenerator(path))
-    // .attr("class", "optimization-path")
-    // .attr("pathLength", `${pathLength}`)
-    // .attr("stroke-dasharray", `${pathLength} ${pathLength}`)
-    // .attr("stroke-dashoffset", `${pathLength}`)
-    // .transition()
-    // .duration(path.length * drawingTime)
-    // .delay(drawingTime + 50)
-    // .attr("stroke-dashoffset", 0);
+    //     .selectAll()
+    //     .data(path)
+    //     .join("path")
+    //     .attr("d", lineGenerator(path))
+    //     .attr("class", "optimization-path")
+    //     .attr("pathLength", `${pathLength}`)
+    //     .attr("stroke-dasharray", `${pathLength} ${pathLength}`)
+    //     .attr("stroke-dashoffset", `${pathLength}`)
+    //     .transition()
+    //     .duration(path.length * drawingTime)
+    //     .delay(drawingTime + 50)
+    //     .attr("stroke-dashoffset", 0);
 
     gradientPathGroup
         .selectAll()

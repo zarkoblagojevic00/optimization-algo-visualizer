@@ -1,7 +1,7 @@
 <template>
     <div class="whole-page">
         <aside class="aside-container">
-            <optimizer-picker v-model:optimizers="optimizers" />
+            <optimizer-picker v-model:activeOptimizers="optimizers" />
         </aside>
         <div class="contour-plot-container">
             <contour-plot

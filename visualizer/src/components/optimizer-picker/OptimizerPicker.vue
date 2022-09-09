@@ -14,50 +14,53 @@
         <div class="submenu">
             <div class="submenu-title">Optimizers</div>
             <div
-                v-for="(optimizer, idx) in activeOptimizers"
+                v-for="(optMod, idx) in optimizersWithModals"
                 :key="idx"
                 class="optimizer-menu-item underline-container transition-ease-in"
-                :class="[optimizer.active ? 'active' : '', optimizer.value.id]"
+                :class="[
+                    optMod.optimizer.active ? 'active' : '',
+                    optMod.optimizer.value.id,
+                ]"
             >
                 <div class="optimizer-color-title">
                     <div
                         :class="[
-                            optimizer.active
-                                ? `${optimizer.value.id}-circle-color`
+                            optMod.optimizer.active
+                                ? `${optMod.optimizer.value.id}-circle-color`
                                 : '',
                             'optimizer-color',
                         ]"
                     ></div>
                     <div class="optimizer-title">
-                        {{ optimizer.value.id }}
+                        {{ optMod.optimizer.value.id }}
                     </div>
                 </div>
                 <div class="optimizer-activate-more">
                     <div class="tooltip top-left">
                         <span class="tooltiptext">{{
-                            optimizer.active ? "Deactivate" : "Activate"
+                            optMod.optimizer.active ? "Deactivate" : "Activate"
                         }}</span>
                         <input
                             class="optimizer-checkbox"
-                            v-model="optimizer.active"
+                            v-model="optMod.optimizer.active"
                             type="checkbox"
-                            :name="`activate-${optimizer.value.id}`"
-                            :id="`activate-${optimizer.value.id}`"
+                            :name="`activate-${optMod.optimizer.value.id}`"
+                            :id="`activate-${optMod.optimizer.value.id}`"
                         />
                     </div>
                     <div class="tooltip top-left">
                         <span class="tooltiptext">More</span>
                         <button
-                            @click="optimizer.modal.active = true"
+                            @click="optMod.modal.active = true"
                             class="optimizer-more-button"
                         ></button>
                     </div>
                     <!-- Modal -->
                     <component
-                        :key="optimizer.value.id"
-                        :is="optimizer.modal.component"
-                        v-model:optimizer="optimizer.value"
-                        v-model:active="optimizer.modal.active"
+                        :key="optMod.optimizer.value.id"
+                        :is="optMod.modal.component"
+                        v-model:optimizer="optMod.optimizer.value"
+                        v-model:active="optMod.modal.active"
                     ></component>
                 </div>
             </div>
@@ -105,23 +108,24 @@ const modals = [
 ];
 
 export default {
-    components: { SgdModal },
     props: {
-        optimizers: {
+        activeOptimizers: {
             type: Array,
             required: true,
         },
     },
     data() {
         return {
-            activeOptimizers: [],
+            optimizersWithModals: [],
         };
     },
-    emits: ["update:optimizers"],
+    emits: ["update:activeOptimizers"],
     created() {
-        this.activeOptimizers = initOptimizers.map((optimizer, idx) => ({
-            value: optimizer,
-            active: true,
+        this.optimizersWithModals = initOptimizers.map((optimizer, idx) => ({
+            optimizer: {
+                active: true,
+                value: optimizer,
+            },
             modal: {
                 active: false,
                 component: modals[idx],
@@ -129,12 +133,12 @@ export default {
         }));
     },
     watch: {
-        activeOptimizers: {
-            handler() {
-                const newOptimizers = this.activeOptimizers
-                    .filter((opt) => opt.active)
-                    .map((opt) => opt.value);
-                this.$emit("update:optimizers", newOptimizers);
+        optimizersWithModals: {
+            handler(newValue) {
+                const newActiveOptimizers = newValue
+                    .filter((optMod) => optMod.optimizer.active)
+                    .map((optMod) => optMod.optimizer.value);
+                this.$emit("update:activeOptimizers", newActiveOptimizers);
             },
             deep: true,
             immediate: true,

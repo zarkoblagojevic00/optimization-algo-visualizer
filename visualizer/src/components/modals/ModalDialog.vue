@@ -16,6 +16,7 @@
             <section class="modal-card-body">
                 <slot></slot>
             </section>
+
             <footer class="modal-card-foot">
                 <button
                     class="clickable fill primary transition-ease-in"

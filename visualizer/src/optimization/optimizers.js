@@ -195,7 +195,6 @@ const Adam = (alpha, omega1, omega2, iterations) => (gradF) => {
                 x - (alpha * mHat[0]) / Math.sqrt(vHat[0] + epsilon1),
                 y - (alpha * mHat[1]) / Math.sqrt(vHat[1] + epsilon1),
             ];
-            console.log(nextPoint);
         }
     };
 };
