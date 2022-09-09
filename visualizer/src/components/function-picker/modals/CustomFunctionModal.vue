@@ -82,7 +82,7 @@ import DomainPicker from "@/components/number-range/DomainPicker.vue";
 import FunctionSyntaxDisplay from "@/components/function-picker/modals/FunctionSyntaxDisplay.vue";
 import ModalFormMixin from "@/mixins/modal-form-mixin.js";
 import mexp from "math-expression-evaluator";
-import { getGradientApproximator } from "@/optimization/optimization-problems.js";
+import { getGradientApproximator } from "@/optimization/optimization-criteria.js";
 import toast from "@/toast/toast.js";
 
 export default {
@@ -181,8 +181,8 @@ export default {
             this.$emit("update:plot", {
                 xRange: this.savedForm.xRange,
                 yRange: this.savedForm.yRange,
-                optimizationProblem: {
-                    id: this.plot.optimizationProblem.id,
+                optimizationCriterion: {
+                    id: this.plot.optimizationCriterion.id,
                     title: this.savedForm.title,
                     f,
                     gradF,

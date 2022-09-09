@@ -2,29 +2,29 @@
 <template>
     <div class="function-picker-wrapper">
         <surface-plot
-            v-if="modelValue.xRange"
-            :xRange="modelValue.xRange"
-            :yRange="modelValue.yRange"
-            :optimizationProblem="modelValue.optimizationProblem"
-            v-model:zRange="modelValue.zRange"
+            v-if="plot.xRange"
+            :xRange="plot.xRange"
+            :yRange="plot.yRange"
+            :optimizationCriterion="plot.optimizationCriterion"
+            v-model:zRange="plot.zRange"
         />
         <div class="submenu">
             <div class="submenu-title">Functions</div>
             <div
-                v-for="problem in displayedProblems"
-                :key="`function-${problem.plot.optimizationProblem.id}`"
+                v-for="plotMod in displayedPlotMods"
+                :key="`function-${plotMod.plot.optimizationCriterion.id}`"
                 class="function-menu-item underline-container transition-ease-in"
                 :class="{
-                    active: activeId === problem.plot.optimizationProblem.id,
+                    active: activeId === plotMod.plot.optimizationCriterion.id,
                 }"
             >
                 <div class="function-title">
-                    {{ problem.plot.optimizationProblem.title }}
+                    {{ plotMod.plot.optimizationCriterion.title }}
                 </div>
                 <div class="function-activate-more">
                     <div class="tooltip top-right">
                         <span class="tooltiptext">{{
-                            activeId === problem.plot.optimizationProblem.id
+                            activeId === plotMod.plot.optimizationCriterion.id
                                 ? "Active"
                                 : "Pick"
                         }}</span>
@@ -32,35 +32,35 @@
                             class="function-radio"
                             v-model="activeId"
                             type="radio"
-                            :value="problem.plot.optimizationProblem.id"
-                            :name="`activate-${problem.plot.optimizationProblem.id}`"
-                            :id="`activate-${problem.plot.optimizationProblem.id}`"
+                            :value="plotMod.plot.optimizationCriterion.id"
+                            :name="`activate-${plotMod.plot.optimizationCriterion.id}`"
+                            :id="`activate-${plotMod.plot.optimizationCriterion.id}`"
                         />
                     </div>
                     <div class="tooltip top-right">
                         <span class="tooltiptext">More</span>
                         <button
                             class="function-more-button"
-                            @click="problem.modal.active = true"
+                            @click="plotMod.modal.active = true"
                         ></button>
                     </div>
                 </div>
             </div>
             <!-- Modals -->
             <component
-                v-for="problem in problems"
-                :key="`modal-${problem.plot.optimizationProblem.id}`"
-                :is="problem.modal.component"
-                v-model:plot="problem.plot"
-                v-model:active="problem.modal.active"
+                v-for="plotMod in plotsWithModals"
+                :key="`modal-${plotMod.plot.optimizationCriterion.id}`"
+                :is="plotMod.modal.component"
+                v-model:plot="plotMod.plot"
+                v-model:active="plotMod.modal.active"
             ></component>
         </div>
 
         <simple-pagination
-            v-show="problems.length > pageSize"
+            v-show="plotsWithModals.length > pageSize"
             :pageSize="pageSize"
-            :items="problems"
-            v-model="displayedProblems"
+            :items="plotsWithModals"
+            v-model="displayedPlotMods"
         ></simple-pagination>
 
         <button
@@ -76,8 +76,8 @@
 import SurfacePlot from "@/components/function-picker/SurfacePlot.vue";
 import {
     quadratic,
-    quadratic2mins,
-} from "@/optimization/optimization-problems.js";
+    quadratic2Gaussians,
+} from "@/optimization/optimization-criteria.js";
 
 import QuadraticModal from "@/components/function-picker/modals/QuadraticModal.vue";
 import Quadratic2GaussiansModal from "@/components/function-picker/modals/Quadratic2GaussiansModal.vue";
@@ -87,14 +87,9 @@ import SimplePagination from "@/components/function-picker/SimplePagination.vue"
 import { shallowRef } from "vue";
 import { deepCopy } from "@/utils/deep-copy.js";
 
-const modals = [
-    shallowRef(QuadraticModal),
-    shallowRef(Quadratic2GaussiansModal),
-];
-
-const functions = [
+const initCriteria = [
     quadratic(1, 0, 2),
-    quadratic2mins(
+    quadratic2Gaussians(
         {
             min1Deepness: 2,
             min1Coord: [1, 0],
@@ -108,14 +103,19 @@ const functions = [
     ),
 ];
 
+const modals = [
+    shallowRef(QuadraticModal),
+    shallowRef(Quadratic2GaussiansModal),
+];
+
 export default {
     props: {
-        modelValue: {
+        plot: {
             type: Object,
             required: true,
         },
     },
-    emits: ["update:modelValue"],
+    emits: ["update:plot"],
     components: {
         SurfacePlot,
         CustomFunctionModal,
@@ -125,42 +125,43 @@ export default {
         return {
             pageSize: 4,
             activeId: "",
-            problems: functions.map((prob, idx) => ({
+            plotsWithModals: initCriteria.map((criterion, idx) => ({
                 plot: {
                     xRange: [-2, 2],
                     yRange: [-2, 2],
-                    // zRange will be calculated by FunctionPicker/SurfacePlot
+                    // zRange will be calculated by SurfacePlot
                     // zRange is needed for rendering contour plot correctly
                     zRange: [],
-                    optimizationProblem: prob,
+                    optimizationCriterion: criterion,
                 },
                 modal: {
                     active: false,
                     component: modals[idx],
                 },
             })),
-            displayedProblems: [],
+            displayedPlotMods: [],
         };
     },
     created() {
-        this.activeId = this.problems[0].plot.optimizationProblem.id;
+        this.activeId = this.plotsWithModals[0].plot.optimizationCriterion.id;
     },
 
     watch: {
         activeId: {
             handler(newValue) {
-                const problem = this.problems.find(
-                    (prob) => prob.plot.optimizationProblem.id === newValue
+                const plotMod = this.plotsWithModals.find(
+                    (prob) => prob.plot.optimizationCriterion.id === newValue
                 );
-                this.$emit("update:modelValue", problem.plot);
+                this.$emit("update:plot", plotMod.plot);
             },
         },
-        problems: {
+        plotsWithModals: {
             handler() {
-                const newPlot = this.problems.find(
-                    (prob) => prob.plot.optimizationProblem.id === this.activeId
+                const newPlot = this.plotsWithModals.find(
+                    (prob) =>
+                        prob.plot.optimizationCriterion.id === this.activeId
                 ).plot;
-                this.$emit("update:modelValue", newPlot);
+                this.$emit("update:plot", newPlot);
             },
             deep: true,
         },
@@ -168,14 +169,14 @@ export default {
 
     methods: {
         addCustomFunction() {
-            this.problems.push({
+            this.plotsWithModals.push({
                 plot: {
                     xRange: [-2, 2],
                     yRange: [-2, 2],
                     // zRange will be calculated by FunctionPicker/SurfacePlot
                     // zRange is needed for rendering contour plot correctly
                     zRange: [],
-                    optimizationProblem: {
+                    optimizationCriterion: {
                         id: `custom-function-${Math.random()}`,
                         title: "Draft",
                         f: null,
@@ -189,7 +190,7 @@ export default {
             });
         },
         resetModal() {
-            this.problems.push(deepCopy(this.newCustomFunction));
+            this.plotsWithModals.push(deepCopy(this.newCustomFunction));
             this.newCustomFunction = {
                 plot: {
                     xRange: [-2, 2],
@@ -197,7 +198,7 @@ export default {
                     // zRange will be calculated by FunctionPicker/SurfacePlot
                     // zRange is needed for rendering contour plot correctly
                     zRange: [],
-                    optimizationProblem: null,
+                    optimizationCriterion: null,
                 },
                 modal: {
                     active: false,

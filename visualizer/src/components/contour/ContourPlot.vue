@@ -27,7 +27,7 @@ export default {
             required: true,
             validator: rangeValidator,
         },
-        optimizationProblem: {
+        optimizationCriterion: {
             type: Object,
             required: true,
         },
@@ -65,7 +65,7 @@ export default {
         zRange() {
             this.rerenderPlot();
         },
-        optimizationProblem() {
+        optimizationCriterion() {
             this.rerenderPlot();
         },
     },

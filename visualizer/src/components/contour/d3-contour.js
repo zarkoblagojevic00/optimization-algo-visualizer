@@ -77,7 +77,7 @@ const addContours = (svg, options) => {
         .attr("d", geoPath());
 };
 
-const createContours = ({ optimizationProblem: { f }, zRange }) => {
+const createContours = ({ optimizationCriterion: { f }, zRange }) => {
     const grid = createGrid(f);
     const thresholds = createThresholds(zRange);
     return contours()

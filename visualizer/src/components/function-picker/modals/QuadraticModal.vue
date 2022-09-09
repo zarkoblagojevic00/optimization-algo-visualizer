@@ -3,12 +3,12 @@
     <div>
         <modal-dialog
             v-model:isActive="active"
-            :modalTitle="plot.optimizationProblem.title"
+            :modalTitle="plot.optimizationCriterion.title"
             :onOpen="focusInput"
             :onSuccess="updatePlot"
             :onCancel="resetForm"
         >
-            <h3 :key="`function-${plot.optimizationProblem.id}`">
+            <h3 :key="`function-${plot.optimizationCriterion.id}`">
                 {{ equation }}
             </h3>
 
@@ -66,7 +66,7 @@
 <script>
 import ModalDialog from "@/components/modals/ModalDialog.vue";
 import DomainPicker from "@/components/number-range/DomainPicker.vue";
-import { quadratic } from "@/optimization/optimization-problems.js";
+import { quadratic } from "@/optimization/optimization-criteria.js";
 import ModalFormMixin from "@/mixins/modal-form-mixin.js";
 
 export default {
@@ -115,7 +115,7 @@ export default {
             this.$emit("update:plot", {
                 xRange: this.savedForm.xRange,
                 yRange: this.savedForm.yRange,
-                optimizationProblem: quadratic(
+                optimizationCriterion: quadratic(
                     this.savedForm.a,
                     this.savedForm.b,
                     this.savedForm.c

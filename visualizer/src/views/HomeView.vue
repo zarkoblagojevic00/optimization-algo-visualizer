@@ -13,7 +13,7 @@
             />
         </div>
         <aside class="function-picker-container">
-            <function-picker v-model="plot"></function-picker>
+            <function-picker v-model:plot="plot"></function-picker>
         </aside>
     </div>
 </template>
@@ -39,7 +39,7 @@ export default {
     computed: {
         optimizersWithGradF() {
             if (!this.plot.xRange) return [];
-            const gradF = this.plot.optimizationProblem.gradF;
+            const gradF = this.plot.optimizationCriterion.gradF;
             return this.optimizers.map((opt) => ({
                 id: opt.id,
                 generatorFactory: opt.factory(gradF),

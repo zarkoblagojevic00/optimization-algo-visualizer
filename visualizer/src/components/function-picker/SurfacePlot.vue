@@ -9,7 +9,7 @@ import { rangeValidator } from "@/utils/prop-validators.js";
 
 export default {
     props: {
-        optimizationProblem: {
+        optimizationCriterion: {
             type: Object,
             required: true,
         },
@@ -73,7 +73,7 @@ export default {
                 this.xRange,
                 this.yRange,
                 this.step,
-                this.optimizationProblem.f
+                this.optimizationCriterion.f
             );
         },
     },
