@@ -16,13 +16,14 @@ import {
 } from "d3";
 
 const render = (options) => {
+    updateOptimizers(options.optimizers);
     svg = createSvg(options);
-    renderSvg(svg, options);
+    renderSvg(options);
 };
 
 const rerender = (options) => {
     svg.selectAll("*").remove();
-    renderSvg(svg, options);
+    renderSvg(options);
 };
 
 const updateOptimizers = (newOptimizers) => {
@@ -31,8 +32,9 @@ const updateOptimizers = (newOptimizers) => {
 
 export { render, rerender, updateOptimizers };
 
-let optimizers; // must be defined as global state for click event listener to work
 let svg;
+let optimizers; // must be defined as global state for click event listener to work
+let xScale, yScale;
 
 const width = 1300;
 const height = 1025;
@@ -47,22 +49,20 @@ const createSvg = ({ svgContainerId }) =>
         .attr("viewBox", [0, 0, width, height])
         .style("display", "block");
 
-const renderSvg = (svg, options) => {
+const renderSvg = (options) => {
     setupScales(options);
-    const contoursGroup = addContours(svg, options);
+    const contoursGroup = addContours(options);
     const gradientPathGroup = svg.append("g");
-    optimizers = options.optimizers;
+    addAxes();
     addMouseClickEvent(contoursGroup, gradientPathGroup);
-    addAxes(svg, options);
 };
 
-let xScale, yScale;
 const setupScales = ({ xRange, yRange }) => {
     xScale = scaleLinear(xRange, [0, width]);
     yScale = scaleLinear(yRange, [height, 0]);
 };
 
-const addContours = (svg, options) => {
+const addContours = (options) => {
     const contours = createContours(options);
     const colorScale = createColorScale(options.zRange);
     return svg
@@ -143,7 +143,7 @@ const createColorScale = (zRange) => {
     return scale;
 };
 
-const addAxes = (svg) => {
+const addAxes = () => {
     svg.append("g").call(createAxis, xScale, axisBottom, 0, 0); // x-axis top
     svg.append("g").call(createAxis, yScale, axisLeft, width, 0); // y-axis right
     svg.append("g").call(createAxis, xScale, axisTop, 0, height); // x-axis bottom
@@ -172,6 +172,7 @@ const createAxis = (
 const addMouseClickEvent = (contoursGroup, gradientPathGroup) => {
     contoursGroup.on("click", (event) => {
         const startPoint = pointer(event);
+        // convert pixel to cartesian coordinates
         const x0 = [xScale.invert(startPoint[0]), yScale.invert(startPoint[1])];
         startOptimization(gradientPathGroup, x0, optimizers);
     });
@@ -179,21 +180,21 @@ const addMouseClickEvent = (contoursGroup, gradientPathGroup) => {
 
 const startOptimization = (gradientPathGroup, x0, optimizers) => {
     const paths = optimize(x0, optimizers);
-    drawAllPaths(gradientPathGroup, paths);
+    redrawAllPaths(gradientPathGroup, paths);
 };
 
-// creates the object with the following form:
-// {
-//     sgd: [[x0, y0], [x1, y1], ... [xn, yn]],    ---->  list of coordinates - steps that optimizer took
-//     rmsprop: [[x0, y0], [x1, y1], ... [xm, ym]],
+// creates array with the following form:
+// [
+//     { id: sgd, path: [[x0, y0], [x1, y1], ... [xn, yn]]},    ---->  list of pixel coordinates - steps that optimizer took
+//     { id: rmsprop, path: [[x0, y0], [x1, y1], ... [xm, ym]]},
 //     ...
-// }
+// ]
 const optimize = (x0, optimizers) =>
-    optimizers.reduce((prev, curr) => {
-        const { id, generatorFactory } = curr;
-        prev[id] = [...cartesianToPixselPathTransformer(generatorFactory(x0))];
-        return prev;
-    }, {});
+    optimizers.map(({ id, generatorFactory }) => {
+        const cartesianPath = generatorFactory(x0);
+        const pixelPath = cartesianToPixselPathTransformer(cartesianPath);
+        return { id, path: [...pixelPath] }; // convert generator to array
+    });
 
 // cartesianPath is a generator that returns path in scope of domain (cartesian coordinates)
 // to render path properly cartesian coordianates must by transformed to pixel coordinates
@@ -203,25 +204,32 @@ function* cartesianToPixselPathTransformer(cartesianPath) {
     }
 }
 
-const drawAllPaths = (gradientPathGroup, paths) => {
+const redrawAllPaths = (gradientPathGroup, paths) => {
+    removeAllDrawnPaths(gradientPathGroup);
+    drawAllPaths(gradientPathGroup, paths);
+};
+
+const removeAllDrawnPaths = (gradientPathGroup) => {
     gradientPathGroup.selectAll("path").remove();
     gradientPathGroup.selectAll("circle").remove();
-    Object.entries(paths).forEach((entry) =>
-        drawSinglePath(entry, gradientPathGroup)
-    );
+};
+
+const drawAllPaths = (gradientPathGroup, paths) => {
+    paths.forEach((path) => drawSinglePath(path, gradientPathGroup));
 };
 
 const delay =
     (coef = 1) =>
     (d, i) =>
         coef * drawingTime * i;
+
 const getX = (d) => d[0];
 const getY = (d) => d[1];
 
 const lineGenerator = line().x(getX).y(getY).curve(curveCardinal);
 
 // TODO: refine animation
-function drawSinglePath([id, path], gradientPathGroup) {
+function drawSinglePath({ id, path }, gradientPathGroup) {
     // const pathLength = 100;
     // gradientPathGroup
     //     .selectAll()

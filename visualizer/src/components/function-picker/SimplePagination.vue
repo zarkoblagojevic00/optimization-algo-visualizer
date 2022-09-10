@@ -59,14 +59,12 @@ export default {
     watch: {
         activePage: {
             handler() {
-                console.log("Active page updated");
                 this.updateDisplayedItems();
             },
             immediate: true,
         },
         items: {
             handler() {
-                console.log("Items updated");
                 this.updateDisplayedItems();
             },
             deep: true,
@@ -75,7 +73,6 @@ export default {
     methods: {
         updateDisplayedItems() {
             const offset = this.activePage * this.pageSize;
-            console.log(this.items.length);
             const newDisplayedItems = this.items.slice(
                 offset,
                 offset + this.pageSize

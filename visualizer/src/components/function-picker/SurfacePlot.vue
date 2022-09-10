@@ -62,18 +62,13 @@ export default {
 
         plotly.newPlot(this.$refs.plotly, data, layout);
     },
-    data() {
-        return {
-            step: 0.05,
-        };
-    },
     computed: {
         surfaceData() {
             return this.get3Dspace(
                 this.xRange,
                 this.yRange,
-                this.step,
-                this.optimizationCriterion.f
+                this.optimizationCriterion.f,
+                0.05
             );
         },
     },
@@ -93,7 +88,7 @@ export default {
     },
 
     methods: {
-        get3Dspace([xMin, xMax], [yMin, yMax], step, f) {
+        get3Dspace([xMin, xMax], [yMin, yMax], f, step) {
             const x = [];
             const y = [];
             const z = [];

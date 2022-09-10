@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import { rangeValidator } from "@/utils/prop-validators.js";
 import {
     render,
     rerender,
@@ -12,61 +11,34 @@ import {
 
 export default {
     props: {
-        xRange: {
-            type: Array,
-            required: true,
-            validator: rangeValidator,
-        },
-        yRange: {
-            type: Array,
-            required: true,
-            validator: rangeValidator,
-        },
-        zRange: {
-            type: Array,
-            required: true,
-            validator: rangeValidator,
-        },
-        optimizationCriterion: {
+        plot: {
             type: Object,
             required: true,
         },
+
         optimizers: {
             type: Array,
             required: true,
         },
     },
     mounted() {
-        this.renderPlot();
+        render({
+            svgContainerId: this.svgContainerId,
+            ...this.plot,
+            optimizers: this.optimizers,
+        });
     },
     data() {
         return {
             svgContainerId: "svg-container",
         };
     },
-    methods: {
-        renderPlot() {
-            render({ svgContainerId: this.svgContainerId, ...this.$props });
-        },
-        rerenderPlot() {
-            rerender({ svgContainerId: this.svgContainerId, ...this.$props });
-        },
-    },
     watch: {
+        plot() {
+            rerender(this.plot);
+        },
         optimizers() {
             updateOptimizers(this.optimizers);
-        },
-        xRange() {
-            this.rerenderPlot();
-        },
-        yRange() {
-            this.rerenderPlot();
-        },
-        zRange() {
-            this.rerenderPlot();
-        },
-        optimizationCriterion() {
-            this.rerenderPlot();
         },
     },
 };

@@ -1,19 +1,16 @@
 <template>
     <div class="whole-page">
-        <aside class="aside-container">
+        <aside class="optimizer-picker-container">
             <optimizer-picker v-model:activeOptimizers="optimizers" />
         </aside>
         <div class="contour-plot-container">
             <contour-plot
                 v-if="plot.zRange && plot.zRange.length"
-                v-bind="{
-                    ...plot,
-                    optimizers: optimizersWithGradF,
-                }"
+                v-bind="{ plot, optimizers: optimizersWithGradF }"
             />
         </div>
         <aside class="function-picker-container">
-            <function-picker v-model:plot="plot"></function-picker>
+            <function-picker v-model:plot="plot" />
         </aside>
     </div>
 </template>
@@ -56,7 +53,7 @@ export default {
     display: flex;
 }
 
-.aside-container {
+.optimizer-picker-container {
     flex: 18%;
 }
 
@@ -69,7 +66,7 @@ export default {
 }
 
 @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-    .aside-container {
+    .optimizer-picker-container {
         flex: 20%;
     }
 
