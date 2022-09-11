@@ -42,7 +42,7 @@ const momentumSGD = (alpha, omega, iterations) => (gradF) => {
 
 const momentum = (alpha, omega, iterations) => ({
     id: "momentum",
-    title: "Gradient Descent with Momentum",
+    title: "Momentum Gradient Descent",
     factory: momentumSGD(alpha, omega, iterations),
 });
 
@@ -94,7 +94,7 @@ const adaptiveGradient = (alpha, iterations) => (gradF) => {
 
 const adagrad = (alpha, iterations) => ({
     id: "adagrad",
-    title: "ADAGRAD - Adaptive gradient",
+    title: "ADAGRAD",
     factory: adaptiveGradient(alpha, iterations),
 });
 
@@ -201,7 +201,7 @@ const Adam = (alpha, omega1, omega2, iterations) => (gradF) => {
 
 const adam = (alpha, omega1, omega2, iterations) => ({
     id: "adam",
-    title: "Adam - Adaptive momentum estimation",
+    title: "Adam",
     factory: Adam(alpha, omega1, omega2, iterations),
 });
 

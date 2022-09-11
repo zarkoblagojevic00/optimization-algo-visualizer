@@ -162,14 +162,14 @@ export default {
                 toast.fire({
                     text: "Please fill out all the required data correctly.",
                     type: "warning",
-                    duration: 3500,
+                    duration: 3000,
                 });
                 throw new Error("Validation failed.");
             }
             toast.fire({
-                text: "You have successfully updated function",
+                text: "You have successfully updated custom function",
                 type: "success",
-                duration: 3500,
+                duration: 3000,
             });
             this.updateForm();
             this.emitPlot();

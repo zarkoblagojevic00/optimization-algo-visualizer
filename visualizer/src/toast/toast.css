@@ -5,13 +5,12 @@
     opacity: 0;
     pointer-events: none;
 
-    min-width: 350px; 
-    max-width: 350px; 
-    min-height: 50px;
+    min-width: 365px; 
+    max-width: 365px; 
+    min-height: 45px;
     border-radius: 0.4rem;
 
     overflow-wrap: break-word;
-    /* text-align: justify; */
     padding: 0.5em 0.75em; 
     position: fixed;  
     z-index: 999;  
@@ -24,7 +23,10 @@
     align-items: center;
 
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 1.15rem;
+    font-size: 1.1rem;
+
+    color: #fff;
+    background-color: #1e2834;
   }
   
   /* Show the toast when clicking on a button (class added with JavaScript) */
@@ -37,24 +39,17 @@
 
   .toast-default {
     border: 4px solid #716c6c;
-    background-color: #fff;
     color: #716c6c;
   }
 
   .toast-danger{
-    border: 4px solid #ff6868;
-    background-color: #c43434; 
-    color: #fff;
+    border: 4px solid #c43434;
   }
 
   .toast-success {
-    border: 4px solid #7ef55a;
-    background-color: #43c540; 
-    color: #fff;
+    border: 4px solid #30b12e;
   }
 
   .toast-warning {
-    border: 4px solid #fee57e;
-    background-color: #cba407; 
-    color: #fff;
+    border: 4px solid #d8af0b;
   }

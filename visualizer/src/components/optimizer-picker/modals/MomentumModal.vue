@@ -55,6 +55,7 @@ import NumInputRange from "@/components/number-range/NumInputRange.vue";
 
 import { momentum } from "@/optimization/optimizers.js";
 import ModalFormMixin from "@/mixins/modal-form-mixin.js";
+import toast from "@/toast/toast.js";
 
 export default {
     components: {
@@ -95,6 +96,11 @@ export default {
         },
         updateOptimizer() {
             this.updateForm();
+            toast.fire({
+                text: `${this.optimizer.title} successfully updated`,
+                type: "success",
+                duration: 3000,
+            });
             this.$emit(
                 "update:optimizer",
                 momentum(

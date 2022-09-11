@@ -68,6 +68,7 @@ import ModalDialog from "@/components/modals/ModalDialog.vue";
 import DomainPicker from "@/components/number-range/DomainPicker.vue";
 import { quadratic } from "@/optimization/optimization-criteria.js";
 import ModalFormMixin from "@/mixins/modal-form-mixin.js";
+import toast from "@/toast/toast.js";
 
 export default {
     name: "QuadraticModal",
@@ -112,6 +113,11 @@ export default {
         },
         updatePlot() {
             this.updateForm();
+            toast.fire({
+                text: `${this.plot.optimizationCriterion.title} successfully updated`,
+                type: "success",
+                duration: 3000,
+            });
             this.$emit("update:plot", {
                 xRange: this.savedForm.xRange,
                 yRange: this.savedForm.yRange,
