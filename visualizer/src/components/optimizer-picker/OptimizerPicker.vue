@@ -91,8 +91,8 @@ const initOptimizers = [
     sgd(0.05, 100),
     momentum(0.05, 0.5, 100),
     nesterov(0.05, 0.5, 100),
-    adagrad(0.8, 100),
-    rmsprop(0.1, 0.9, 100),
+    adagrad(0.25, 100),
+    rmsprop(0.05, 0.9, 100),
     adadelta(0.9, 100),
     adam(0.091, 0.9, 0.99, 100),
 ];

@@ -62,7 +62,7 @@ export default {
     data() {
         return {
             form: {
-                alpha: 0.8,
+                alpha: 0.25,
                 iterations: 100,
             },
         };

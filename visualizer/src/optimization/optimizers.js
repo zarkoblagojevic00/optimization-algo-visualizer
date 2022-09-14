@@ -28,14 +28,15 @@ const sgd = (alpha, iterations) => ({
 const momentumSGD = (alpha, omega, iterations) => (gradF) => {
     return function* (x0) {
         let nextPoint = x0;
-        let v = [0, 0];
+        let [vX, vY] = [0, 0];
         let x, y, gradX, gradY;
         for (let i = 0; i < iterations; i++) {
             yield nextPoint;
             [x, y] = nextPoint;
             [gradX, gradY] = gradF(x, y);
-            v = [omega * v[0] + alpha * gradX, omega * v[1] + alpha * gradY];
-            nextPoint = [x - v[0], y - v[1]];
+            vX = omega * vX - alpha * gradX;
+            vY = omega * vY - alpha * gradY;
+            nextPoint = [x + vX, y + vY];
         }
     };
 };
@@ -49,18 +50,16 @@ const momentum = (alpha, omega, iterations) => ({
 const nesterovSGD = (alpha, omega, iterations) => (gradF) => {
     return function* (x0) {
         let nextPoint = x0;
-        let v = [0, 0];
+        let [vX, vY] = [0, 0];
         let x, y, gradPredictedX, gradPredictedY, predictedNextPoint;
         for (let i = 0; i < iterations; i++) {
             yield nextPoint;
             [x, y] = nextPoint;
-            predictedNextPoint = [x - omega * v[0], y - omega * v[1]];
+            predictedNextPoint = [x + omega * vX, y + omega * vY];
             [gradPredictedX, gradPredictedY] = gradF(...predictedNextPoint);
-            v = [
-                omega * v[0] + alpha * gradPredictedX,
-                omega * v[1] + alpha * gradPredictedY,
-            ];
-            nextPoint = [x - v[0], y - v[1]];
+            vX = omega * vX - alpha * gradPredictedX;
+            vY = omega * vY - alpha * gradPredictedY;
+            nextPoint = [x + vX, y + vY];
         }
     };
 };
@@ -74,20 +73,19 @@ const nesterov = (alpha, omega, iterations) => ({
 const adaptiveGradient = (alpha, iterations) => (gradF) => {
     return function* (x0) {
         let nextPoint = x0;
-        const epsilon1 = 1e-8; // for regularization
-        let v = [0, 0];
-        let G = [0, 0];
-        let x, y, gradX, gradY;
+        let [GX, GY] = [0, 0];
+        let x, y, gradX, gradY, vX, vY;
+        const eps = 1e-8; // for regularization
+
         for (let i = 0; i < iterations; i++) {
             yield nextPoint;
             [x, y] = nextPoint;
             [gradX, gradY] = gradF(x, y);
-            G = [G[0] + gradX ** 2, G[1] + gradY ** 2];
-            v = [
-                (alpha * gradX) / Math.sqrt(G[0] + epsilon1),
-                (alpha * gradY) / Math.sqrt(G[1] + epsilon1),
-            ];
-            nextPoint = [x - v[0], y - v[1]];
+            GX = GX + gradX ** 2;
+            GY = GY + gradY ** 2;
+            vX = -(alpha / Math.sqrt(GX + eps)) * gradX;
+            vY = -(alpha / Math.sqrt(GY + eps)) * gradY;
+            nextPoint = [x + vX, y + vY];
         }
     };
 };
@@ -101,23 +99,20 @@ const adagrad = (alpha, iterations) => ({
 const rmsProp = (alpha, omega, iterations) => (gradF) => {
     return function* (x0) {
         let nextPoint = x0;
-        const epsilon1 = 1e-8; // for regularization
-        let v = [0, 0];
-        let G = [0, 0];
-        let x, y, gradX, gradY;
+        let [GX, GY] = [0, 0];
+        let x, y, gradX, gradY, vX, vY;
+        const eps = 1e-8; // for regularization
+        const _omega = 1 - omega;
+
         for (let i = 0; i < iterations; i++) {
             yield nextPoint;
             [x, y] = nextPoint;
             [gradX, gradY] = gradF(x, y);
-            G = [
-                omega * G[0] + (1 - omega) * gradX ** 2,
-                omega * G[1] + (1 - omega) * gradY ** 2,
-            ];
-            v = [
-                (alpha * gradX) / Math.sqrt(G[0] + epsilon1),
-                (alpha * gradY) / Math.sqrt(G[1] + epsilon1),
-            ];
-            nextPoint = [x - v[0], y - v[1]];
+            GX = omega * GX + _omega * gradX ** 2;
+            GY = omega * GY + _omega * gradY ** 2;
+            vX = -(alpha / Math.sqrt(GX + eps)) * gradX;
+            vY = -(alpha / Math.sqrt(GY + eps)) * gradY;
+            nextPoint = [x + vX, y + vY];
         }
     };
 };
@@ -131,30 +126,23 @@ const rmsprop = (alpha, omega, iterations) => ({
 const adaptiveDelta = (omega, iterations) => (gradF) => {
     return function* (x0) {
         let nextPoint = x0;
-        const epsilon1 = 1e-8; // for regularization
-        let v = [1, 1];
-        let G = [0, 0];
-        let T = [0, 0];
-        let x, y, gradX, gradY;
+        let [GX, GY] = [0, 0];
+        let [EX, EY] = [0, 0];
+        let x, y, gradX, gradY, vX, vY;
+        const eps = 1e-5; // for regularization
+        const _omega = 1 - omega;
+
         for (let i = 0; i < iterations; i++) {
             yield nextPoint;
             [x, y] = nextPoint;
             [gradX, gradY] = gradF(x, y);
-            G = [
-                omega * G[0] + (1 - omega) * gradX ** 2,
-                omega * G[1] + (1 - omega) * gradY ** 2,
-            ];
-            T = [
-                omega * T[0] + (1 - omega) * v[0] ** 2,
-                omega * T[1] + (1 - omega) * v[1] ** 2,
-            ];
-            v = [
-                (Math.sqrt(T[0] + epsilon1) * gradX) /
-                    Math.sqrt(G[0] + epsilon1),
-                (Math.sqrt(T[1] + epsilon1) * gradY) /
-                    Math.sqrt(G[1] + epsilon1),
-            ];
-            nextPoint = [x - v[0], y - v[1]];
+            GX = omega * GX + _omega * gradX ** 2;
+            GY = omega * GY + _omega * gradY ** 2;
+            vX = -(Math.sqrt(EX + eps) / Math.sqrt(GX + eps)) * gradX;
+            vY = -(Math.sqrt(EY + eps) / Math.sqrt(GY + eps)) * gradY;
+            EX = omega * EX + _omega * vX ** 2;
+            EY = omega * EY + _omega * vY ** 2;
+            nextPoint = [x + vX, y + vY];
         }
     };
 };
@@ -168,32 +156,29 @@ const adadelta = (omega, iterations) => ({
 const Adam = (alpha, omega1, omega2, iterations) => (gradF) => {
     return function* (x0) {
         let nextPoint = x0;
-        const epsilon1 = 1e-8; // for regularization
-        let v = [1, 1],
-            vHat;
-        let m = [1, 1],
-            mHat;
+        let [vX, vY] = [0, 0];
+        let [mX, mY] = [0, 0];
+        let mHatX, mHatY, vHatX, vHatY;
         let x, y, gradX, gradY;
+        const eps = 1e-8; // for regularization
+        const _omega1 = 1 - omega1;
+        const _omega2 = 1 - omega2;
+
         for (let i = 0; i < iterations; i++) {
             yield nextPoint;
             [x, y] = nextPoint;
             [gradX, gradY] = gradF(x, y);
-            m = [
-                omega1 * m[0] + (1 - omega1) * gradX,
-                omega1 * m[1] + (1 - omega1) * gradY,
-            ];
-            v = [
-                omega2 * v[0] + (1 - omega2) * gradX ** 2,
-                omega2 * v[1] + (1 - omega2) * gradY ** 2,
-            ];
-            mHat = [m[0] / (1 - omega1), m[1] / (1 - omega1)];
-            vHat = [
-                Math.abs(v[0]) / (1 - omega2),
-                Math.abs(v[1]) / (1 - omega2),
-            ];
+            mX = omega1 * mX + _omega1 * gradX;
+            mY = omega1 * mY + _omega1 * gradY;
+            vX = omega2 * vX + _omega2 * gradX ** 2;
+            vY = omega2 * vY + _omega2 * gradY ** 2;
+            mHatX = mX / _omega1;
+            mHatY = mY / _omega1;
+            vHatX = Math.abs(vX / _omega2);
+            vHatY = Math.abs(vY / _omega2);
             nextPoint = [
-                x - (alpha * mHat[0]) / Math.sqrt(vHat[0] + epsilon1),
-                y - (alpha * mHat[1]) / Math.sqrt(vHat[1] + epsilon1),
+                x - (alpha / Math.sqrt(vHatX + eps)) * mHatX,
+                y - (alpha / Math.sqrt(vHatY + eps)) * mHatY,
             ];
         }
     };

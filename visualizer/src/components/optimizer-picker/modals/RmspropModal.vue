@@ -77,7 +77,7 @@ export default {
     data() {
         return {
             form: {
-                alpha: 0.1,
+                alpha: 0.05,
                 iterations: 100,
                 omega: 0.9,
             },
