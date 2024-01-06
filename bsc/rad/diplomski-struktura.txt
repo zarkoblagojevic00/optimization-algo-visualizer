@@ -1,0 +1,82 @@
+Napomena: Rad je potrebno pisati na ћирилици. Koristi stilove koji su ponuđeni za ovaj dokument. Ovo uključuje:
+•	Stilovi Heading 1, 2 i 3 odgovaraju naslovu poglavlja i potpoglavlja.
+•	Stil Običan tekst se koristi za većinu teksta.
+•	Stil Teze se koristi za prikaz liste.
+•	Stil Labela se koristi za formatiranje caption-a za slike, tabele i listinge koda.
+•	Stil Kod se koristi za formatiranje listinga koda i pomena elementa koda u tekstu
+
+
+1.	UVOD
+	- motivacija - edukacija, 
+	- ostale stavke navedene u šablonu
+
+2.	PREGLED SLIČNIH SISTEMA
+2.1	Predavanje iz predmeta Metode optimizacije - Višedimenziona numerika - gradijentni algoritmi (dr. Milan Rapaić, prof., dr. Zoran Jeličić, prof.)
+	Sličnost:
+	- pokriveni su isti algoritmi, istim edukativno "hronološkim" redosledom	- 
+	Različitost:	
+	- predavanje je bilo održano pomoću Jupyter Notebook-a, dok je ovo cela aplikacija, koja olakšava testiranje algoritama
+	(nisam siguran da li to ovde da navedem jer nije aplikacija već predavanje, ali poslužilo je kao osnovna inspiracija)
+	
+2.2	Projekat koji je poslužio kao inspiracija za diplomski (vizualizator algoritama pretrage) - https://clementmihailescu.github.io/Pathfinding-Visualizer
+	Sličnost:
+	- vizualizacija
+	- interakcija
+	- edukativni karakter
+	Različitost:
+	- drugačiji problem (optimizacioni algoritmi)
+
+2.3 	Projekat koji se isto bavi vizualizacijom optimizacionih algoritama - https://emiliendupont.github.io/2018/01/24/optimization-visualization
+	Sličnost:
+	- isti problem
+	- sličan pristup (kliktanje na contour plot i izbor algoritama)
+	Različitost:
+	- pregledniji contour plot 
+		- vidljive x i y ose
+		- bolja skala boja - nijanse boje od najtamnije ka najsvetlijoj vizuelno dočaravaju gradualnost promene vrednosti funkcije (od najmanje do najveće z vrednosti)
+		- tačkama na putanji optimizacionih algoritama naglašeni su konkretni koraci koji su algoritmi preduzeli (dok je kod referenciranog projekta linijom naglašena samo putanja)
+	- optimizacioni algoritmi
+		- podržan je veći broj optimizacionih algoritama
+		- korisniku je omogućena promena hiperparametara svakog od implementiranih algoritama
+	- izbor funkcije (novo) - nije bilo prisutno u referenciranom projektu
+	- 3D prikaz odabrane funkcije (novo)
+
+3.	KORIŠĆENE SOFTVERSKE TEHNOLOGIJE
+3.1	Vue3.js - javascript radni okvir
+3.2	Plotly.js - biblioteka za iscrtavanje grafika, korišćena za 3D surface plot
+3.3	D3.js - Data-Driven Documents - biblioteka korišćena za interaktivno iscrtavanje contour plot-a i optimizacionih puteva
+3.4	math-expression-evaluator.js - biblioteka koja validne matematičke izraze predstavljene stringovima parsira u javascript funkcije
+
+4.	SPECIFIKACIJA
+4.1	Specifikacija zahteva - mogu koristiti skice aplikacije, use case diagram ne bi imao puno smisla s obzirom da je jedan korisnik i relativno mali broj zahteva
+4.1.1	Funkcionalni zahtevi
+	- korisnik može da bira koji će gradijentni optimizacioni algoritam da testira (i podešava njihove hiperparametre)
+	- korisnik želi da ima pregled optimizacionog problema (funkcije čiji minimum se traži) kao contour-plot i kao 3D surface plot
+	- korisnik interaguje sa contour plot-om kako bi klikom na njega zadao početnu tačku optimizacionim algoritmima i time pokrenu animaciju iscrtavanja putanje ovih algoritama
+	- korisniku su pruženi osnovni optimizacioni problemi (funkcije koje može da prilagođava) za testiranje algoritama
+	- korisnik može da definiše (i ažurira) nove optimizacioni probleme (funkcije)
+4.1.2	Nefunkcionalni zahtevi
+	- animacija svih algoritama u isto vreme treba da bude tečna (zahtevno za CPU i browser)
+	- korisnik treba da je svestan koji algoritmi i koja funkcija je aktivna u svakom trenutku
+	- izmene stanja funkcija i hiperparametara treba da budu propraćene odgovarajućim notifikacijama (poboljšanje korisničkog iskustva)
+
+Pošto ovo nije klasična aplikacija sa složenim modelom podataka i interakcijom objekata (nema backend, za čije modelovanje i prikaz su neophodni odgovarajući UML dijagrami)
+nisam siguran na koji način bih mogao da zadovoljim naredne 3 stavke. Mogao bih pričati o komponentama iz kojih je izgrađen GUI i kako one interagujeu, ali ni to ne bi moglo da bude propraćeno naprednim dijagramima.
+Možda bi ovo bilo mesto u diplomskom u kojem malo bliže opišem implementirane optimizacione algoritme (intuiciju i matematiku iza svakog od njih, opšti korak numeričkog postupka,...)
+4.2	Specifikacija sistema
+4.2.1	Model podataka
+4.2.2	Arhitektura sistema
+
+5.	IMPLEMENTACIJA
+	- funkcionalni api koji poštuju svi optimizatori (zato što se u različitim delovima aplikacije menjaju funkcije, hiperparametri i početne tačke)
+	- implementacija algoritama putem js generatora, objašnjenje zašto baš generatori (efikasniji od lista)
+	- koji podaci i u kom formatu su neophodni za iscrtavanje 3D surface plot-a
+	- koji podaci i u kom formatu su neophodni za iscrtavanje contour plot-a i putanja algoritama
+	- kako se kreira nova funkcija
+6.	DEMONSTRACIJA
+	Scenario 1:
+	- prikaz izbora optimizatora, izmene hiperparametara jednog od njih, odabira optimizacionog problema, izmene njihovih parametara, pokretanje optimizacije klikom na contour plot.
+	Scenario 2:
+	- izbor drugih optimizatora, kreiranje nove funkcije(validni i nevalidni parametri) i pokretanje optimizacije klikom na contour plot
+7.	ZAKLJUČAK
+	- stavke navedene u šablonu
